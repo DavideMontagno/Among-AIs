@@ -1,5 +1,6 @@
 import telnetlib
 import time
+import numpy as np
 
 time_sleep = 0.51
 
@@ -36,7 +37,8 @@ class Player:
         actual = switcher.get(command, "Invalid Command")
         time.sleep(time_sleep)
         self.connection.write(bytes(actual, "utf-8"))
-        result =str(self.connection.read_until(b"\xc2\xbb\n",time_sleep).decode("utf-8") )
+        result = str(self.connection.read_until(
+            b"\xc2\xbb\n", time_sleep).decode("utf-8"))
 
         return result
 
@@ -48,5 +50,20 @@ class Player:
         actual = switcher.get(command, "Invalid Command")
         time.sleep(time_sleep)
         self.connection.write(bytes(actual, "utf-8"))
-        result = str(self.connection.read_until(b"\n",time_sleep).decode("utf-8"))
+        result = str(self.connection.read_until(
+            b"\n", time_sleep).decode("utf-8"))
         return result
+
+    def process_map(self):
+        map_matrix = []
+        raw_map = self.status("look")
+        # map_processed = '................................\n...............................@\n................................\n.............&..................\n...............&................\n................................\n...................#...........!\n........&....&......#..x........\n.............&....#...#.#.......\n.....#...............#.#...$....\n...##.#..........#.....#........\n....##..........###....#........\n....###................#........\n...#.###.......&.##.............\n......##..............#.!.......\n.......#.........#..............\n......#...............#.........\n..........$$......##.#..........\n.........$$....###..............\n.........$$....#...#............\n....$$.....#######...#..........\n....$.......#######......$...$..\n...........#####...####..$......\n............#.####.##.#.........\n............####..###.#...~~~...\n...............#...###......~~..\n..X.....&.....#.#...##.......~~.\n........&............#......~~..\n..............#!.....####...~.@@\n.@@................####a#~~~..@@\n@@@................#.####~....@@\n.@@...................###~....@.\n'
+        map_processed = raw_map.split('\n', 1)[-1]
+        map_processed = map_processed.rsplit('\n', 2)[0]
+        map_processed = map_processed.splitlines()
+        for elem in map_processed:
+            map_matrix.append(list(elem))
+
+        map_matrix = np.array(map_matrix)
+
+        return map_matrix
