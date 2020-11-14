@@ -71,8 +71,8 @@ class PathFinder():
             self.neighbords = [(self.current[0] - 1, self.current[1]), (self.current[0], self.current[1]+1),
                                (self.current[0]+1, self.current[1]), (self.current[0], self.current[1]-1)]
 
-            if self.current == self.goal:
-                break
+#            if self.current == self.goal:
+#                break
 
             for next in self.neighbords:
                 if next[0] < 0 or next[1] < 0:
