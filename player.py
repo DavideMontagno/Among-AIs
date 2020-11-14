@@ -1,6 +1,7 @@
 import telnetlib
 import time
 import numpy as np
+import re
 
 time_sleep = 0.51
 
@@ -12,21 +13,32 @@ class Player:
         self.game_name = game_name
         self.player_nature = player_nature
         self.player_name = player_name
+        self.game_symbol=self.player_name
         self.player_descr = player_descr
         self.connection = telnetlib.Telnet(self.host, self.port)
+
+    def set_game_symbol(self):
+        result=self.status("status")
+        index=result.find("ME: symbol=") 
+        self.game_symbol=result[index+11]
 
     def interact(self, command, direction=""):
 
         switcher = {"move": self.game_name+" MOVE "+direction+"\n",
                     "shoot": self.game_name+" SHOOT "+direction+"\n",
-                    "join": self.game_name+" JOIN "+self.player_name+" "+self.player_nature+" - "+self.player_descr+"\n"}
+                    "join": self.game_name+" JOIN "+self.player_name+" "+self.player_nature+" - "+self.player_descr+"\n",
+                    "leave": self.game_name+" LEAVE "+self.player_name
+                    }
 
         actual = switcher.get(command, "Invalid Command")
-
+        
         time.sleep(time_sleep)
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
             b"\n", time_sleep).decode("utf-8"))
+
+        if(command=="join"):
+            self.set_game_symbol()
 
         return actual+" "+result
 
