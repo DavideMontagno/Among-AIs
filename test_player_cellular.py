@@ -24,7 +24,10 @@ pl4=Player(NAME_GAME,"pl4")
 print(pl4.interact("join"))
 
 # START GAME
-print(pl1.manage_game("start"))
+if(pl1.manage_game("start")=="ERROR 501 Need two non-empty teams to start"):
+    print("ERRORE CREAZIONE")
+    exit()
+
 
 print(pl1.status("status"))
 
