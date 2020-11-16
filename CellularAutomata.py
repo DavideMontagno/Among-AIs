@@ -54,7 +54,7 @@ class CellularAutomata():
             for column in range(len(self.raw_map[0])):
                 current_cell = self.raw_map[row][column]
                 if(current_cell == "#"  ):
-                    cellcolours[row][column] = 'K'
+                    cellcolours[row][column] = 'k'
                 elif(current_cell == "."):
                     cellcolours[row][column] = 'g'
                 elif(current_cell == "@"):
