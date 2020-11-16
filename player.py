@@ -22,12 +22,13 @@ class Player:
         index=result.find("ME: symbol=") 
         self.game_symbol=result[index+11]
 
-    def interact(self, command, direction=""):
+    def interact(self, command, direction="",text=""):
 
         switcher = {"move": self.game_name+" MOVE "+direction+"\n",
                     "shoot": self.game_name+" SHOOT "+direction+"\n",
                     "join": self.game_name+" JOIN "+self.player_name+" "+self.player_nature+" - "+self.player_descr+"\n",
-                    "leave": self.game_name+" LEAVE "+self.player_name
+                    "leave": self.game_name+" LEAVE "+self.player_name+" "+text,
+                    "nop": self.game_name+" NOP"
                     }
 
         actual = switcher.get(command, "Invalid Command")
