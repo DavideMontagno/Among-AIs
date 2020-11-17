@@ -5,17 +5,28 @@ import datetime
 import threading
 import os
 import imageio
+import multiprocessing
 
 count=0
 png_gif_dir = "./gif/"
-tot=10
-for i in range(0,10):
+tot=1
+
+
+
+
+def start_game(cellular_a):
+    cellular_a.play()
+
+if __name__ == "__main__":
+    
     try:
         #CREATION
-        NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        NAME_GAME = "ai9_test"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        print(NAME_GAME)
+        input("Wait here")
         png_dir = str(NAME_GAME)
 
-        pl1=Player(NAME_GAME,"pl1")
+        pl1=Player(NAME_GAME,"pl20")
         print(pl1.manage_game("new"))
 
         #JOIN GAME
@@ -62,12 +73,13 @@ for i in range(0,10):
 
         pl15=Player(NAME_GAME,"pl15")
         print(pl15.interact("join"))
-
+        #input("Press Enter to continue...")
         # START GAME
+        input('Wait here')
         if(pl1.manage_game("start")=="ERROR 501 Need two non-empty teams to start"):
             print("ERRORE CREAZIONE")
             exit()
-
+        input('Wait here')
 
         print(pl1.status("status"))
 
@@ -75,28 +87,51 @@ for i in range(0,10):
 
 
         ca=CellularAutomata(pl1)
-        result = ca.play()
-        '''t1 = threading.Thread(target=ca.play(), args=[])
-        ca2=CellularAutomata(pl2)
-        t2 = threading.Thread(target=ca2.play(), args=[])
-        ca3=CellularAutomata(pl3)
-        t3 = threading.Thread(target=ca3.play(), args=[])
-        ca3=CellularAutomata(pl4)
-        t4 = threading.Thread(target=ca4.play(), args=[])
-        list_ca = [ca,ca2,ca3,ca4]
-        threads = []
-        for n in range(len(list_ca)):
-           start_new_thread(list_ca[n].play(), [])
+        #result = ca.play()
 
+        t1 = multiprocessing.Process(target=start_game, args=(ca,))
+        ca2=CellularAutomata(pl2)
+        t2 = multiprocessing.Process(target=start_game, args=(ca2,))
+        ca3=CellularAutomata(pl3)
+        t3 = multiprocessing.Process(target=start_game, args=(ca3,))
+        ca4=CellularAutomata(pl4)
+        t4 = multiprocessing.Process(target=start_game, args=(ca4,))
+        ca5=CellularAutomata(pl5)
+        t5 = multiprocessing.Process(target=start_game, args=(ca5,))
+        ca6=CellularAutomata(pl6)
+        t6 = multiprocessing.Process(target=start_game, args=(ca6,))
+        ca7=CellularAutomata(pl7)
+        t7 = multiprocessing.Process(target=start_game, args=(ca7,))
+        ca8=CellularAutomata(pl8)
+        t8 = multiprocessing.Process(target=start_game, args=(ca8,))
+        ca9=CellularAutomata(pl9)
+        t9 = multiprocessing.Process(target=start_game, args=(ca9,))
+        ca10=CellularAutomata(pl10)
+        t10 = multiprocessing.Process(target=start_game, args=(ca10,))
+        ca11=CellularAutomata(pl11)
+        t11 = multiprocessing.Process(target=start_game, args=(ca11,))
+        ca12=CellularAutomata(pl12)
+        t12 = multiprocessing.Process(target=start_game, args=(ca12,))
+        ca13=CellularAutomata(pl13)
+        t13 = multiprocessing.Process(target=start_game, args=(ca13,))
+        ca14=CellularAutomata(pl14)
+        t14 = multiprocessing.Process(target=start_game, args=(ca14,))
+        ca15=CellularAutomata(pl15)
+        t15 = multiprocessing.Process(target=start_game, args=(ca15,))
+
+        threads = [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15]
+
+        for n in range(len(threads)):
+            threads[n].start()
         # Wait all threads to finish.
-        for t in threads:
-            t.join()'''
-        name=""
-        if(result==True):
+        for n in range(len(threads)):
+            threads[n].join()
+        name="work"
+        '''if(result==True):
             count = count+1
             name="work_"
         else:
-            name="error"
+            name="error"'''
 
         images = []
         for file_name in os.listdir(png_dir):
@@ -107,12 +142,11 @@ for i in range(0,10):
         imageio.mimsave(png_gif_dir+name+NAME_GAME+"_"+str(count)+".gif", images)
         os.rmdir(png_dir)
         print("finished")
-        
+
     except Exception as e:
         print(e)
-        continue
-print("Executed correctly: "+str(count)+" on "+str(tot))
-print("Finito.")
+    '''print("Executed correctly: "+str(count)+" on "+str(tot))
+    print("Finito.")'''
 
 
 

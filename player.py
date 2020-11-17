@@ -16,6 +16,7 @@ class Player:
         self.game_symbol=self.player_name
         self.player_descr = player_descr
         self.connection = telnetlib.Telnet(self.host, self.port)
+       # self.chat = telnetlib.Telnet(self.host, self.port_chat)
 
     def set_game_symbol(self):
         result=self.status("status")
@@ -29,8 +30,9 @@ class Player:
                     "join": self.game_name+" JOIN "+self.player_name+" "+self.player_nature+" - "+self.player_descr+"\n",
                     "leave": self.game_name+" LEAVE "+self.player_name+" "+text,
                     "nop": self.game_name+" NOP"
-                    }
 
+                    }
+        
         actual = switcher.get(command, "Invalid Command")
         
         time.sleep(time_sleep)

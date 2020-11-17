@@ -126,6 +126,7 @@ class CellularAutomata():
         return 0
 
     def attack(self):
+        
         if(self.player_position[0] == (len(self.raw_map[0])-1)):
             dict_shoot_direction={
                 "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
@@ -161,6 +162,9 @@ class CellularAutomata():
                     self.already_shoot.append(elem)
                     print(self.already_shoot)
                     print(key+": " + str(dict_shoot_direction[key]))
+        if(not(self.last_shot)):
+            return False
+        else: return True
 
     def is_enemy(self,elem):
         if(elem in ['@','.','~','$','!']):
@@ -176,20 +180,24 @@ class CellularAutomata():
             return True
         return False
 
+    bipolarism = True
     def play(self):
         while(True):
             self.update()
             #print(self.player.status("look"))
-            self.attack()
-            result = self.move()
-            if(result == 1):
-                print(
-                    "|||||||||||||||||||||||||||WIN|||||||||||||||||||||||||||||||||")
-                return True
-            if(result == 2):
-                print(
-                    "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
-                return False
+            if(not(self.attack())):
+
+                result = self.move()
+                if(result == 1):
+                    print(
+                        "|||||||||||||||||||||||||||WIN|||||||||||||||||||||||||||||||||")
+                    return True
+                if(result == 2):
+                    print(
+                        "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
+                    return False
+            
+            
 
 
     ##############################################UTILITY
