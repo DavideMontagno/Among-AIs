@@ -23,6 +23,13 @@ class CellularAutomata():
         else:
             self.flag_symbol = "x"
         self.raw_map = self.player.process_map()
+        if (self.player.game_symbol.islower()):
+            self.enemies = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z']
+            self.allies = ['a','b','c','d','e','f','g','h','i','l','m','n','o','p','w','r','s','t','u','v','z','x']
+        else:
+            self.enemies = ['a','b','c','d','e','f','g','h','i','l','m','n','o','p','w','r','s','t','u','v','z']
+            self.allies = ['A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','U','V','Z','X']
+        self.unshoot = self.allies + ['#', '&', '@', '!', '$']
 
         self.flag = np.where(self.raw_map == self.flag_symbol)
         if(self.flag==[]):
@@ -78,6 +85,7 @@ class CellularAutomata():
         try: 
             fig, ax = plt.subplots(
             )
+            plt.tight_layout()
             ax.axis('off')
             the_table = ax.table(cellColours=cellcolours,loc='center')
             plt.savefig("./"+str(self.player.game_name)+"/fig_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")+"_"+str(self.player.player_name)+".png")
@@ -165,9 +173,54 @@ class CellularAutomata():
 
         return 0
 
+    def attack(self):
+        
+        for x in np.flip(self.raw_map[:self.player_position[0],self.player_position[1]]):
+            if (x in self.unshoot):
+#                 print(x)
+                break
+            elif (x in self.enemies):
+                print(self.player.interact("shoot", direction="N"))
+                self.unshoot.append(x)
+                print(self.unshoot)
+                print('N: ' + str(np.flip(self.raw_map[:self.player_position[0],self.player_position[1]])))
+        
+        for x in self.raw_map[self.player_position[0]+1:,self.player_position[1]]:
+            if (x in self.unshoot):
+#                 print(x)
+                break
+            elif (x in self.enemies):
+                print(self.player.interact("shoot", direction="S"))
+                self.unshoot.append(x)
+                print(self.unshoot)
+                print('S: ' + str((self.raw_map[self.player_position[0]+1:,self.player_position[1]])))
+                
+                
+        for x in self.raw_map[self.player_position[0],self.player_position[1]+1:]:
+            if (x in self.unshoot):
+#                 print(x)
+                break
+            elif (x in self.enemies):
+                print(self.player.interact("shoot", direction="E"))
+                self.unshoot.append(x)
+                print(self.unshoot)
+                print('E: ' + str(self.raw_map[self.player_position[0]][self.player_position[1]+1:]))
+        
+        for x in np.flip(self.raw_map[self.player_position[0],:self.player_position[1]]):
+            if (x in self.unshoot):
+#                 print(x)
+                break
+            elif (x in self.enemies):
+                print(self.player.interact("shoot", direction="W"))
+                self.unshoot.append(x)
+                print(self.unshoot)
+                print('W: ' + str(np.flip(self.raw_map[self.player_position[0]][:self.player_position[1]])))
+               
+
     def play(self):
         while(True):
-            result = self.update()
+            self.update()
+            self.attack()
             result = self.move()
             if(result == 1):
                 print(
