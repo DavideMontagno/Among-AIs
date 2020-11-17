@@ -7,7 +7,7 @@ import os
 import imageio
 
 count=0
-png_gif = "./gif/"
+png_gif_dir = "./gif/"
 tot=10
 for i in range(0,10):
     try:
@@ -97,15 +97,17 @@ for i in range(0,10):
             name="work_"
         else:
             name="error"
+
         images = []
         for file_name in os.listdir(png_dir):
             if file_name.endswith('.png'):
                 file_path = os.path.join(png_dir, file_name)
                 images.append(imageio.imread(file_path))
                 os.remove(file_path)
-        imageio.mimsave(png_gif+name+NAME_GAME+"_"+str(count)+".gif", images)
+        imageio.mimsave(png_gif_dir+name+NAME_GAME+"_"+str(count)+".gif", images)
         os.rmdir(png_dir)
         print("finished")
+        
     except Exception as e:
         print(e)
         continue
