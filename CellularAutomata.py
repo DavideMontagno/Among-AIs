@@ -126,12 +126,27 @@ class CellularAutomata():
         return 0
 
     def attack(self):
-        dict_shoot_direction={
-            "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
-            "S": self.raw_map[self.player_position[0]+1:, self.player_position[1]],
-            "E": self.raw_map[self.player_position[0], self.player_position[1]+1:],
-            "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
-        }
+        if(self.player_position[0] == (len(self.raw_map[0])-1)):
+            dict_shoot_direction={
+                "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
+                "S": self.raw_map[self.player_position[0]:, self.player_position[1]],
+                "E": self.raw_map[self.player_position[0], self.player_position[1]+1:],
+                "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
+            }
+        elif(self.player_position[1] == (len(self.raw_map[0])-1)):
+            dict_shoot_direction={
+                "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
+                "S": self.raw_map[self.player_position[0]+1:, self.player_position[1]],
+                "E": self.raw_map[self.player_position[0], self.player_position[1]:],
+                "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
+            }
+        else: 
+            dict_shoot_direction={
+                "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
+                "S": self.raw_map[self.player_position[0]+1:, self.player_position[1]],
+                "E": self.raw_map[self.player_position[0], self.player_position[1]+1:],
+                "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
+            }
         for key in dict_shoot_direction:
             blocked=False# Testare l'utilizzo del break
             for elem in dict_shoot_direction[key]:
@@ -150,9 +165,9 @@ class CellularAutomata():
     def is_enemy(self,elem):
         if(elem in ['@','.','~','$','!']):
             return False
-        if(self.player.game_symbol.islower() and elem.islower()):
+        elif(self.player.game_symbol.islower() and elem.islower()):
             return False
-        if(self.player.game_symbol.isupper() and elem.isupper()):
+        elif(self.player.game_symbol.isupper() and elem.isupper()):
             return False
         return True
     
@@ -164,7 +179,7 @@ class CellularAutomata():
     def play(self):
         while(True):
             self.update()
-            print(self.player.status("look"))
+            #print(self.player.status("look"))
             self.attack()
             result = self.move()
             if(result == 1):
@@ -175,6 +190,8 @@ class CellularAutomata():
                 print(
                     "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                 return False
+
+
     ##############################################UTILITY
     def plot_grid(self):
         try:
