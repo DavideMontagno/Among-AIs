@@ -16,73 +16,74 @@ tot=1
 
 def start_game(cellular_a):
     cellular_a.play()
-
+def start_chat(cellular_a):
+    #cellular_a.read_chat()
+    print("fatto")
 if __name__ == "__main__":
     
     try:
         #CREATION
-        NAME_GAME = "ai9_test"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         print(NAME_GAME)
-        input("Wait here")
         png_dir = str(NAME_GAME)
 
-        pl1=Player(NAME_GAME,"pl20")
+        pl1=Player(NAME_GAME,"pl1")
         print(pl1.manage_game("new"))
-
         #JOIN GAME
         print(pl1.interact("join"))
-
-        pl2=Player(NAME_GAME,"pl2")
+        '''print(pl1.command_chat("name"))
+        print(pl1.command_chat("join"))'''
+        pl2=Player(NAME_GAME,"ai9_pl2")
         print(pl2.interact("join"))
-
+        
+        #print(pl2.chat("join", chat_name=NAME_GAME))
         pl3=Player(NAME_GAME,"pl3")
         print(pl3.interact("join"))
-
+        #print(pl3.chat("join", chat_name=NAME_GAME))
         pl4=Player(NAME_GAME,"pl4")
         print(pl4.interact("join"))
-
+        #print(pl4.chat("join", chat_name=NAME_GAME))
         pl5=Player(NAME_GAME,"pl5")
         print(pl5.interact("join"))
-
+        #print(pl5.chat("join", chat_name=NAME_GAME))
         pl6=Player(NAME_GAME,"pl6")
         print(pl6.interact("join"))
-
+        #print(pl6.chat("join", chat_name=NAME_GAME))
         pl7=Player(NAME_GAME,"pl7")
         print(pl7.interact("join"))
-
+        #print(pl7.chat("join", chat_name=NAME_GAME))
         pl8=Player(NAME_GAME,"pl8")
         print(pl8.interact("join"))
-
-        pl9=Player(NAME_GAME,"pl9")
+        #print(pl8.chat("join", chat_name=NAME_GAME))
+        '''pl9=Player(NAME_GAME,"pl9")
         print(pl9.interact("join"))
-
+        #print(pl9.chat("join", chat_name=NAME_GAME))
         pl10=Player(NAME_GAME,"pl10")
         print(pl10.interact("join"))
-
+        #print(pl10.chat("join", chat_name=NAME_GAME))
         pl11=Player(NAME_GAME,"pl11")
         print(pl11.interact("join"))
-
+        #print(pl11.chat("join", chat_name=NAME_GAME))
         pl12=Player(NAME_GAME,"pl12")
         print(pl12.interact("join"))
-
+        #print(pl12.chat("join", chat_name=NAME_GAME))
         pl13=Player(NAME_GAME,"pl13")
         print(pl13.interact("join"))
-
+        #print(pl13.chat("join", chat_name=NAME_GAME))
         pl14=Player(NAME_GAME,"pl14")
         print(pl14.interact("join"))
-
+        #print(pl14.chat("join", chat_name=NAME_GAME))
         pl15=Player(NAME_GAME,"pl15")
         print(pl15.interact("join"))
-        #input("Press Enter to continue...")
+        #print(pl15.chat("join", chat_name=NAME_GAME))
+        #input("Press Enter to continue...")'''
         # START GAME
-        input('Wait here')
+       
+
         if(pl1.manage_game("start")=="ERROR 501 Need two non-empty teams to start"):
             print("ERRORE CREAZIONE")
             exit()
-        input('Wait here')
-
-        print(pl1.status("status"))
-
+        else: print("Startato")
         #print(pl1.status("look"))
 
 
@@ -90,6 +91,7 @@ if __name__ == "__main__":
         #result = ca.play()
 
         t1 = multiprocessing.Process(target=start_game, args=(ca,))
+        c1 = multiprocessing.Process(target=start_chat, args=(ca,))
         ca2=CellularAutomata(pl2)
         t2 = multiprocessing.Process(target=start_game, args=(ca2,))
         ca3=CellularAutomata(pl3)
@@ -104,7 +106,7 @@ if __name__ == "__main__":
         t7 = multiprocessing.Process(target=start_game, args=(ca7,))
         ca8=CellularAutomata(pl8)
         t8 = multiprocessing.Process(target=start_game, args=(ca8,))
-        ca9=CellularAutomata(pl9)
+        '''ca9=CellularAutomata(pl9)
         t9 = multiprocessing.Process(target=start_game, args=(ca9,))
         ca10=CellularAutomata(pl10)
         t10 = multiprocessing.Process(target=start_game, args=(ca10,))
@@ -118,9 +120,9 @@ if __name__ == "__main__":
         t14 = multiprocessing.Process(target=start_game, args=(ca14,))
         ca15=CellularAutomata(pl15)
         t15 = multiprocessing.Process(target=start_game, args=(ca15,))
-
-        threads = [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15]
-
+'''
+        threads = [t1,t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
+        #threads = [t1,c1]
         for n in range(len(threads)):
             threads[n].start()
         # Wait all threads to finish.
@@ -133,13 +135,14 @@ if __name__ == "__main__":
         else:
             name="error"'''
 
+        print(pl1.status("status"))
         images = []
         for file_name in os.listdir(png_dir):
             if file_name.endswith('.png'):
                 file_path = os.path.join(png_dir, file_name)
                 images.append(imageio.imread(file_path))
                 os.remove(file_path)
-        imageio.mimsave(png_gif_dir+name+NAME_GAME+"_"+str(count)+".gif", images)
+        imageio.mimsave(png_gif_dir+name+NAME_GAME+".gif", images)
         os.rmdir(png_dir)
         print("finished")
 

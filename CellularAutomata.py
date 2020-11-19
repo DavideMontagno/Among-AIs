@@ -12,10 +12,10 @@ import os
 import datetime
 import matplotlib.pyplot as plt
 
-
+time_sleep=0.51
 class CellularAutomata():
     def __init__(self, player):
-
+        self.finished=False
         self.player = player
 
         if(self.player.game_symbol.islower()):
@@ -92,48 +92,61 @@ class CellularAutomata():
         # print(self.player.status("look"))
         # print(path)
         #print("Next_symbol: ", self.raw_map[path[1][0]][path[1][1]])
+        #number of movements/movement
+        n_movement=3
+        for i in range(1,n_movement):
+            #print("Movement "+self.player.player_name+" "+str(i)+": ",path[i])
+            path_x = path[i][0]
+            path_y = path[i][1]
 
-        path_x = path[1][0]
-        path_y = path[1][1]
+            direction = ""
+            if(self.player_position[0] < path_x):
+                direction = "S"
+            elif(self.player_position[0] > path_x):
+                direction = "N"
+            elif(self.player_position[1] > path_y):
+                direction = "W"
+            else:
+                direction = "E"
+            
+            command_mov = self.player.interact("move", direction)
+            print(command_mov)
 
-        direction = ""
-        if(self.player_position[0] < path_x):
-            direction = "S"
-        elif(self.player_position[0] > path_x):
-            direction = "N"
-        elif(self.player_position[1] > path_y):
-            direction = "W"
-        else:
-            direction = "E"
-        
-        command_mov = self.player.interact("move", direction)
-        print(command_mov)
+            # Victory
+            if(self.raw_map[path_x][path_y] == self.flag_symbol):
+                print(self.player.status("status"))
+                print(self.player.interact("leave", text="Win Game"))
+                print(self.player.command_chat("leave"))
+                print("Current player is in: ", path_x, path_y)
+                self.finished=True
+                return 1
 
-        # Victory
-        if(self.raw_map[path_x][path_y] == self.flag_symbol):
-            print(self.player.status("status"))
-            print(self.player.interact("leave", text="Win Game"))
-            print("Current player is in: ", path_x, path_y)
-            return 1
-
-        if("blocked" not in command_mov):
-            self.player_position = (path_x, path_y)
-        else:
-            print(self.player.interact("leave", text="Movement fail"))
-            print("Path Blocked")
-            return 2
+            if("blocked" not in command_mov):
+                self.player_position = (path_x, path_y)
+            else:
+                print(self.player.interact("leave", text="Movement fail"))
+                print("Path Blocked")
+                self.finished=True
+                return 2
 
         return 0
 
     def attack(self):
-        
         if(self.player_position[0] == (len(self.raw_map[0])-1)):
-            dict_shoot_direction={
-                "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
-                "S": self.raw_map[self.player_position[0]:, self.player_position[1]],
-                "E": self.raw_map[self.player_position[0], self.player_position[1]+1:],
-                "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
-            }
+            if(self.player_position[1] != (len(self.raw_map[0])-1)):
+                dict_shoot_direction={
+                    "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
+                    "S": self.raw_map[self.player_position[0]:, self.player_position[1]],
+                    "E": self.raw_map[self.player_position[0], self.player_position[1]+1:],
+                    "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
+                }
+            else:
+                dict_shoot_direction={
+                    "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
+                    "S": self.raw_map[self.player_position[0]:, self.player_position[1]],
+                    "E": self.raw_map[self.player_position[0], self.player_position[1]:],
+                    "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]])
+                }
         elif(self.player_position[1] == (len(self.raw_map[0])-1)):
             dict_shoot_direction={
                 "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
@@ -156,12 +169,20 @@ class CellularAutomata():
                 elif (self.is_enemy(elem) and blocked==False):
                     # Attualmente se ci sono 2 nemici sulla stessa linea spara 2 volte reinserendo il primo
                     #Quando verà implementata la kill sarà ok
-                    self.last_shot=True
+
+                    
                     print(elem)
-                    print(self.player.interact("shoot", direction=key))
-                    self.already_shoot.append(elem)
-                    print(self.already_shoot)
-                    print(key+": " + str(dict_shoot_direction[key]))
+                    result = self.player.interact("shoot", direction=key)
+                    print(result)
+                    if(result.lower().find("error")==-1): 
+                        print('Cannot Shoot')
+                        self.last_shot=False
+                        break
+                    else:
+                        self.last_shot=True
+                        self.already_shoot.append(elem)
+                        print(self.already_shoot)
+                        print(key+": " + str(dict_shoot_direction[key]))
         if(not(self.last_shot)):
             return False
         else: return True
@@ -180,14 +201,27 @@ class CellularAutomata():
             return True
         return False
 
-    bipolarism = True
     def play(self):
+        ##### WAITING MATCH BEING STARTED #########
+        while(True):
+            result = self.player.status("status")
+            index=result.find("GA: name="+self.player.game_name+" "+"state=") 
+            condition=result[index+9+len(str(self.player.game_name))+7]
+            if(condition.lower()=="a"):
+                break
+            else:
+                time.sleep(10) 
+                print(self.player.interact("nop"))
+                
+        #### PLAYING MATCH #####
         while(True):
             self.update()
             #print(self.player.status("look"))
+            
             if(not(self.attack())):
-
+                self.player.command_chat("post",text_chat="I'm moving")
                 result = self.move()
+
                 if(result == 1):
                     print(
                         "|||||||||||||||||||||||||||WIN|||||||||||||||||||||||||||||||||")
@@ -196,7 +230,7 @@ class CellularAutomata():
                     print(
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                     return False
-            
+            else: self.player.command_chat("post",text_chat="I'm shooting")
             
 
 
@@ -254,3 +288,10 @@ class CellularAutomata():
             print(e)
         
         self.last_shot=False
+
+    def read_chat(self):
+        '''self.player.chat.write(bytes(actual, "utf-8"))'''
+        while(not(self.finished)):
+            result = str(self.player.chat.read_until(
+                b"\n").decode("utf-8"))
+            print(result)
