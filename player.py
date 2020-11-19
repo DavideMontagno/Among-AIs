@@ -14,16 +14,21 @@ class Player:
         self.game_name = game_name
         self.chat_name = game_name
         self.player_nature = player_nature
+        self.is_impostor=False
         self.player_name = player_name
         self.game_symbol=self.player_name
         self.player_descr = player_descr
         self.connection = telnetlib.Telnet(self.host, self.port)
         self.chat = telnetlib.Telnet(self.host, self.chat_port)
 
-    def set_game_symbol(self):
+    def set_information(self):
         result=self.status("status")
         index=result.find("ME: symbol=") 
         self.game_symbol=result[index+11]
+
+        index=result.find("loyalty=")
+        if(result[index+8]=="0"):
+            self.is_impostor=True
 
     def interact(self, command, direction="",text=""):
 
@@ -43,7 +48,7 @@ class Player:
             b"\n", time_sleep).decode("utf-8"))
 
         if(command=="join"):
-            self.set_game_symbol()
+            self.set_information()
 
         return actual+" "+result
 

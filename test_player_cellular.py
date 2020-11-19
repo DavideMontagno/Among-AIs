@@ -12,8 +12,6 @@ png_gif_dir = "./gif/"
 tot=1
 
 
-
-
 def start_game(cellular_a):
     cellular_a.play()
 def start_chat(cellular_a):
@@ -83,7 +81,7 @@ if __name__ == "__main__":
         if(pl1.manage_game("start")=="ERROR 501 Need two non-empty teams to start"):
             print("ERRORE CREAZIONE")
             exit()
-        else: print("Startato")
+        else: print("Started")
         #print(pl1.status("look"))
 
 
@@ -121,7 +119,7 @@ if __name__ == "__main__":
         ca15=CellularAutomata(pl15)
         t15 = multiprocessing.Process(target=start_game, args=(ca15,))
 '''
-        threads = [t1,t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
+        threads = [t1]#,t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
         #threads = [t1,c1]
         for n in range(len(threads)):
             threads[n].start()
