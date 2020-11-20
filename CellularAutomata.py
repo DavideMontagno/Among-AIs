@@ -169,31 +169,43 @@ class CellularAutomata():
                 elif (self.is_enemy(elem) and blocked==False):
                     # Attualmente se ci sono 2 nemici sulla stessa linea spara 2 volte reinserendo il primo
                     #Quando verà implementata la kill sarà ok
-
-                    
-                    print(elem)
+                    print("***SHOOT***")
+                    if(self.player.is_impostor):
+                        print("IMPOSTOR-> ", self.player.game_symbol, " SHOOT ",elem)
+                        
+                    print("Elem: ",elem)
                     result = self.player.interact("shoot", direction=key)
-                    print(result)
-                    if(result.lower().find("error")==-1): 
+                    print("RESULT: ", result)
+                    if(result.lower().find("error")!=-1): 
                         print('Cannot Shoot')
                         self.last_shot=False
-                        break
                     else:
                         self.last_shot=True
                         self.already_shoot.append(elem)
+                        print("ARRAY SHOOTED")
                         print(self.already_shoot)
-                        print(key+": " + str(dict_shoot_direction[key]))
+                    print("Vettore controlato: ")
+                    print(key+": " + str(dict_shoot_direction[key]))
+                    print("***ENDSHOOT***")
+
         if(not(self.last_shot)):
             return False
-        else: return True
+        else: 
+            return True
 
     def is_enemy(self,elem):
         if(elem in ['@','.','~','$','!']):
             return False
-        elif(self.player.game_symbol.islower() and elem.islower()):
-            return False
-        elif(self.player.game_symbol.isupper() and elem.isupper()):
-            return False
+        if(not self.player.is_impostor):
+            if(self.player.game_symbol.islower() and elem.islower()):
+                return False
+            if(self.player.game_symbol.isupper() and elem.isupper()):
+                return False
+        else:
+            if(self.player.game_symbol.islower() and elem.isupper()):
+                return False
+            if(self.player.game_symbol.isupper() and elem.islower()):
+                return False
         return True
     
     def is_unshottable(self,elem):
@@ -203,6 +215,7 @@ class CellularAutomata():
 
     def play(self):
         ##### WAITING MATCH BEING STARTED #########
+        last_nop= time.clock()
         while(True):
             result = self.player.status("status")
             index=result.find("GA: name="+self.player.game_name+" "+"state=") 
@@ -210,8 +223,10 @@ class CellularAutomata():
             if(condition.lower()=="a"):
                 break
             else:
-                time.sleep(10) 
-                print(self.player.interact("nop"))
+                if(time.clock()-last_nop>10):
+                    print(self.player.interact("nop"))
+                    last_nop=time.clock()
+                
                 
         #### PLAYING MATCH #####
         while(True):
@@ -219,7 +234,7 @@ class CellularAutomata():
             #print(self.player.status("look"))
             
             if(not(self.attack())):
-                self.player.command_chat("post",text_chat="I'm moving")
+                #self.player.command_chat("post",text_chat="I'm moving")
                 result = self.move()
 
                 if(result == 1):
@@ -230,7 +245,9 @@ class CellularAutomata():
                     print(
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                     return False
-            else: self.player.command_chat("post",text_chat="I'm shooting")
+            else:
+                pass
+                #self.player.command_chat("post",text_chat="I'm shooting")
             
 
 
