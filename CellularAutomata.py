@@ -95,6 +95,8 @@ class CellularAutomata():
         #number of movements/movement
         n_movement=3
         for i in range(1,n_movement):
+            
+            self.player.command_chat("post",text_chat="I'm moving")
             #print("Movement "+self.player.player_name+" "+str(i)+": ",path[i])
             path_x = path[i][0]
             path_y = path[i][1]
@@ -116,7 +118,6 @@ class CellularAutomata():
             if(self.raw_map[path_x][path_y] == self.flag_symbol):
                 print(self.player.status("status"))
                 print(self.player.interact("leave", text="Win Game"))
-                print(self.player.command_chat("leave"))
                 print("Current player is in: ", path_x, path_y)
                 self.player.finished=True
                 return 1
@@ -126,7 +127,6 @@ class CellularAutomata():
             else:
                 print(self.player.interact("leave", text="Movement fail"))
                 print("Path Blocked")
-                self.player.finished=True
                 return 2
 
         return 0
@@ -178,9 +178,7 @@ class CellularAutomata():
                     print("RESULT: ", result)
                     if(result.lower().find("error")!=-1): 
                         print('Cannot Shoot')
-                        self.last_shot=False
                     else:
-                        self.last_shot=True
                         self.already_shoot.append(elem)
                         print("ARRAY SHOOTED")
                         print(self.already_shoot)
@@ -234,19 +232,19 @@ class CellularAutomata():
             #print(self.player.status("look"))
             
             if(not(self.attack())):
-                self.player.command_chat("post",text_chat="I'm moving")
                 result = self.move()
 
                 if(result == 1):
                     print(
                         "|||||||||||||||||||||||||||WIN|||||||||||||||||||||||||||||||||")
+                    
+                    #print(self.player.command_chat("leave"))
                     return True
                 if(result == 2):
                     print(
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
+                    #print(self.player.command_chat("leave"))
                     return False
-            else:
-                self.player.command_chat("post",text_chat="I'm shooting")
             
 
 

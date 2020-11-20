@@ -24,6 +24,7 @@ if __name__ == "__main__":
         #CREATION
         NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         print(NAME_GAME)
+        input('wait')
         png_dir = str(NAME_GAME)
 
         pl1=Player(NAME_GAME,NAME_GAME,"pl1")
@@ -34,7 +35,8 @@ if __name__ == "__main__":
         pl1.command_chat("join")
         pl2=Player(NAME_GAME,NAME_GAME,"ai9_pl2")
         print(pl2.interact("join"))
-        
+        pl2.command_chat("name")
+        pl2.command_chat("join")
         #print(pl2.chat("join", chat_name=NAME_GAME))
         pl3=Player(NAME_GAME,NAME_GAME,"pl3")
         print(pl3.interact("join"))
@@ -79,7 +81,7 @@ if __name__ == "__main__":
         # START GAME
        
 
-        if(pl1.manage_game("start")=="ERROR 501 Need two non-empty teams to start"):
+        if(pl1.manage_game("start").lower().find("error")!=-1):
             print("ERRORE CREAZIONE")
             exit()
         else: print("Started")
@@ -93,7 +95,9 @@ if __name__ == "__main__":
         t1 = multiprocessing.Process(target=start_game, args=(ca,))
         c1 = multiprocessing.Process(target=start_chat, args=(ca_chat,))
         ca2=CellularAutomata(pl2)
+        ca_chat2 = CellularAutomata_chat(pl2)
         t2 = multiprocessing.Process(target=start_game, args=(ca2,))
+        c2 = multiprocessing.Process(target=start_chat, args=(ca_chat2,))
         ca3=CellularAutomata(pl3)
         t3 = multiprocessing.Process(target=start_game, args=(ca3,))
         ca4=CellularAutomata(pl4)
@@ -121,7 +125,7 @@ if __name__ == "__main__":
         ca15=CellularAutomata(pl15)
         t15 = multiprocessing.Process(target=start_game, args=(ca15,))
 '''
-        threads = [t1, c1]#,t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
+        threads = [t1, c1,t2,c2]#,t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
         #threads = [t1,c1]
         for n in range(len(threads)):
             threads[n].start()
