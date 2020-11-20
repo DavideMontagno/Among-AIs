@@ -7,19 +7,19 @@ time_sleep = 0.51
 
 
 class Player:
-    def __init__(self,  game_name, player_name, player_nature="AI", player_descr="", host="margot.di.unipi.it", port=8421,chat_port=8422):
+    def __init__(self,  game_name,chat_name, player_name, player_nature="AI", player_descr="", host="margot.di.unipi.it", port=8421,chat_port=8422):
         self.host = host
         self.port = port
         self.chat_port = chat_port
         self.game_name = game_name
-        self.chat_name = game_name
+        self.chat_name = chat_name
         self.player_nature = player_nature
         self.player_name = player_name
         self.game_symbol=self.player_name
         self.player_descr = player_descr
         self.connection = telnetlib.Telnet(self.host, self.port)
         self.chat = telnetlib.Telnet(self.host, self.chat_port)
-
+        self.finished=False
     def set_game_symbol(self):
         result=self.status("status")
         index=result.find("ME: symbol=") 
@@ -86,17 +86,13 @@ class Player:
         return map_matrix
 
     def command_chat(self,command,text_chat=""):
-        
-        switcher = {"name ": "NAME "+self.player_name+"\n",
-                    "join ": "JOIN "+self.chat_name+"\n",
+        switcher = {"name": "NAME "+self.player_name+"\n",
+                    "join": "JOIN "+self.chat_name+"\n",
                     "leave": "LEAVE "+self.chat_name+"\n",
                     "post": "POST "+self.chat_name+" "+text_chat+"\n"
 
                     }
         actual = switcher.get(command, "Invalid Command")
+        print(actual)
         time.sleep(time_sleep)
         self.chat.write(bytes(actual, "utf-8"))
-        '''if(command!="name" and command!="join" and command!="leave"):
-            result = str(self.chat.read_until(
-                b"\n", time_sleep).decode("utf-8"))
-            print(result)'''

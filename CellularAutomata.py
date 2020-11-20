@@ -118,7 +118,7 @@ class CellularAutomata():
                 print(self.player.interact("leave", text="Win Game"))
                 print(self.player.command_chat("leave"))
                 print("Current player is in: ", path_x, path_y)
-                self.finished=True
+                self.player.finished=True
                 return 1
 
             if("blocked" not in command_mov):
@@ -126,7 +126,7 @@ class CellularAutomata():
             else:
                 print(self.player.interact("leave", text="Movement fail"))
                 print("Path Blocked")
-                self.finished=True
+                self.player.finished=True
                 return 2
 
         return 0
@@ -289,9 +289,6 @@ class CellularAutomata():
         
         self.last_shot=False
 
-    def read_chat(self):
-        '''self.player.chat.write(bytes(actual, "utf-8"))'''
-        while(not(self.finished)):
-            result = str(self.player.chat.read_until(
-                b"\n").decode("utf-8"))
-            print(result)
+   
+        
+            
