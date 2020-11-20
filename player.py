@@ -99,6 +99,4 @@ class Player:
 
                     }
         actual = switcher.get(command, "Invalid Command")
-        print(actual)
-        time.sleep(time_sleep)
         self.chat.write(bytes(actual, "utf-8"))

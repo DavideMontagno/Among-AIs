@@ -234,7 +234,7 @@ class CellularAutomata():
             #print(self.player.status("look"))
             
             if(not(self.attack())):
-                #self.player.command_chat("post",text_chat="I'm moving")
+                self.player.command_chat("post",text_chat="I'm moving")
                 result = self.move()
 
                 if(result == 1):
@@ -246,8 +246,7 @@ class CellularAutomata():
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                     return False
             else:
-                pass
-                #self.player.command_chat("post",text_chat="I'm shooting")
+                self.player.command_chat("post",text_chat="I'm shooting")
             
 
 

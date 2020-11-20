@@ -14,10 +14,10 @@ def read_chat(cellular_a):
 
 if __name__ == "__main__":
     
-    NAME = "ai9_test"#+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    NAME = "ai9_test"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    pl1=Player(NAME,"ai9_pl17")
-    pl1=Player(NAME,"ai9_pl1")
+    pl1=Player(NAME,NAME,"ai9_pl17")
+    pl1=Player(NAME,NAME,"ai9_pl1")
     pl1.command_chat("name")
     pl1.command_chat("join")
     
