@@ -12,6 +12,12 @@ import os
 import datetime
 import matplotlib.pyplot as plt
 
+
+
+## Debug part
+## Path faster
+
+
 time_sleep=0.51
 class CellularAutomata():
     def __init__(self, player):
@@ -45,7 +51,7 @@ class CellularAutomata():
     
     def update(self):
         self.raw_map = self.player.process_map()
-        self.plot_grid()
+        #self.plot_grid()
 
         self.grid_cellular_map = Grid(
             width=len(self.raw_map), height=len(self.raw_map[0]))
@@ -125,9 +131,44 @@ class CellularAutomata():
             if("blocked" not in command_mov):
                 self.player_position = (path_x, path_y)
             else:
-                print(self.player.interact("leave", text="Movement fail"))
+                print("I'm here with the player: "+self.player.player_name)
+                result = self.player.status("status")
+                index=result.find("GA: name="+self.player.game_name+" "+"state=") 
+                condition=result[index+9+len(str(self.player.game_name))+7]
+                if(condition.lower()!="a"):
+                      print(self.player.interact("leave", text="Game finished, no win!"))
+                      return 2
+                else:
+                    if(self.player.is_impostor):
+                        check="PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=0 x="+str(self.player_position[0])+" y="+str(self.player_position[1])+" state=ACTIVE"
+                    else:
+                        check="PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=1 x="+str(self.player_position[0])+" y="+str(self.player_position[1])+" state=ACTIVE"
+                    print(check)
+                    print(result)
+                    ### se giocatore attivo####
+                    if(check in result):
+                    ###No path!
+                        if(path == []):
+                            print("No path")
+                            print(self.player.interact("leave", text="No path found"))
+                            return 2
+                        else: #### Ricomincio!
+                            self.update()
+                            start = self.grid_cellular_map.node(
+                            self.player_position[0], self.player_position[1])
+                            path, _ = finder.find_path(start, end, self.grid_cellular_map)
+                            i=1
+                    ### se giocatore non attivo####
+                    else:
+                        print("Player killed")
+                        print(self.player.interact("leave", text="Player killed, RIP!"))
+                        return 2
+
+                     
+                    
+                '''print(self.player.interact("leave", text="Movement fail"))
                 print("Path Blocked")
-                return 2
+                return 2'''
 
         return 0
 
@@ -245,7 +286,7 @@ class CellularAutomata():
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                     #print(self.player.command_chat("leave"))
                     return False
-            
+           
 
 
     ##############################################UTILITY

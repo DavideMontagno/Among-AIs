@@ -140,7 +140,7 @@ if __name__ == "__main__":
             name="error"'''
 
         print(pl1.status("status"))
-        images = []
+        '''images = []
         for file_name in os.listdir(png_dir):
             if file_name.endswith('.png'):
                 file_path = os.path.join(png_dir, file_name)
@@ -148,15 +148,9 @@ if __name__ == "__main__":
                 os.remove(file_path)
         imageio.mimsave(png_gif_dir+name+NAME_GAME+".gif", images)
         os.rmdir(png_dir)
-        print("finished")
+        print("finished")'''
 
     except Exception as e:
         print(e)
     '''print("Executed correctly: "+str(count)+" on "+str(tot))
     print("Finito.")'''
-
-
-
-
-
-

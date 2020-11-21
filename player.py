@@ -96,7 +96,6 @@ class Player:
                     "join": "JOIN "+self.chat_name+"\n",
                     "leave": "LEAVE "+self.chat_name+"\n",
                     "post": "POST "+self.chat_name+" "+text_chat+"\n"
-
                     }
         actual = switcher.get(command, "Invalid Command")
         self.chat.write(bytes(actual, "utf-8"))
