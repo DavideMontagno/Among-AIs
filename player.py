@@ -20,7 +20,7 @@ class Player:
         self.player_descr = player_descr
         self.connection = telnetlib.Telnet(self.host, self.port)
         self.chat = telnetlib.Telnet(self.host, self.chat_port)
-        self.finished=False
+        self.last_status=""
 
     def set_information(self):
         result=self.status("status")
@@ -99,3 +99,5 @@ class Player:
                     }
         actual = switcher.get(command, "Invalid Command")
         self.chat.write(bytes(actual, "utf-8"))
+        if(command=="leave"):
+            print("left chat correctly!")

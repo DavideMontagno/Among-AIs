@@ -48,7 +48,6 @@ class CellularAutomata():
 
         self.grid_cellular_map = Grid()
 
-    
     def update(self):
         self.raw_map = self.player.process_map()
         #self.plot_grid()
@@ -124,6 +123,7 @@ class CellularAutomata():
             if(self.raw_map[path_x][path_y] == self.flag_symbol):
                 print(self.player.status("status"))
                 print(self.player.interact("leave", text="Win Game"))
+                
                 print("Current player is in: ", path_x, path_y)
                 self.player.finished=True
                 return 1
@@ -131,23 +131,24 @@ class CellularAutomata():
             if("blocked" not in command_mov):
                 self.player_position = (path_x, path_y)
             else:
-                print("I'm here with the player: "+self.player.player_name)
+                ### SE OK BLOCKED CONTROLLO LO STATO
                 result = self.player.status("status")
                 index=result.find("GA: name="+self.player.game_name+" "+"state=") 
                 condition=result[index+9+len(str(self.player.game_name))+7]
+                ## SE IL GIOCO È FINITO =>
                 if(condition.lower()!="a"):
                       print(self.player.interact("leave", text="Game finished, no win!"))
                       return 2
-                else:
+                else: ##Cerco lo stato del giocatore
                     if(self.player.is_impostor):
                         check="PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=0 x="+str(self.player_position[0])+" y="+str(self.player_position[1])+" state=ACTIVE"
                     else:
                         check="PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=1 x="+str(self.player_position[0])+" y="+str(self.player_position[1])+" state=ACTIVE"
-                    print(check)
-                    print(result)
+                    ''' print(check)
+                    print(result)'''
                     ### se giocatore attivo####
                     if(check in result):
-                    ###No path!
+                    ### Se nessun path
                         if(path == []):
                             print("No path")
                             print(self.player.interact("leave", text="No path found"))
@@ -254,17 +255,14 @@ class CellularAutomata():
 
     def play(self):
         ##### WAITING MATCH BEING STARTED #########
-        last_nop= time.clock()
         while(True):
             result = self.player.status("status")
+            print(result)
             index=result.find("GA: name="+self.player.game_name+" "+"state=") 
             condition=result[index+9+len(str(self.player.game_name))+7]
+            
             if(condition.lower()=="a"):
                 break
-            else:
-                if(time.clock()-last_nop>10):
-                    print(self.player.interact("nop"))
-                    last_nop=time.clock()
                 
                 
         #### PLAYING MATCH #####
