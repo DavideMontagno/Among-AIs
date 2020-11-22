@@ -89,6 +89,7 @@ if __name__ == "__main__":
 
 
         ca=CellularAutomata(pl1)
+        # ca = CellularAutomata(pl1, debug=False) # to Debug
         ca_chat = CellularAutomata_chat(pl1)
         #result = ca.play()
 
