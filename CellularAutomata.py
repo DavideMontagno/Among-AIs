@@ -276,7 +276,7 @@ class CellularAutomata():
         ##### WAITING MATCH BEING STARTED #########
         while(True):
             result = self.player.status("status")
-            print(result)
+            if(self.debug): print(result)
             index=result.find("GA: name="+self.player.game_name+" "+"state=") 
             condition=result[index+9+len(str(self.player.game_name))+7]
             

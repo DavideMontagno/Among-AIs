@@ -18,13 +18,13 @@ class CellularAutomata_chat():
                     while(True):
                         result = str(self.player.chat.read_until(
                         b"\n").decode("utf-8"))
-                        print("Ricevuto: "+result)
+                        #print("Ricevuto: "+result)
                         if(result.lower().find("finished!")!=-1): 
                             while(True):
                                 line = str(self.player.chat.read_until(
                         b"\n").decode("utf-8"))
                                 
-                                print(line)
+                        #print(line)
                     
                     
                     
