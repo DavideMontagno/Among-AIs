@@ -20,9 +20,10 @@ import matplotlib.pyplot as plt
 
 time_sleep=0.51
 class CellularAutomata():
-    def __init__(self, player):
+    def __init__(self, player, debug=False):
         self.finished=False
         self.player = player
+        self.debug = debug
 
         if(self.player.game_symbol.islower()):
             self.flag_symbol = "X"
@@ -36,8 +37,10 @@ class CellularAutomata():
         self.flag = np.where(self.raw_map == self.flag_symbol)
 
         if(self.flag == []):
-            print(self.player.interact("leave", text="No Flag in Map"))
-            print("Error Flag")
+            res = self.player.interact("leave", text="No Flag in Map")
+            if(self.debug):
+                print(res)
+                print("Error Flag")
 
         self.flag = (self.flag[0][0], self.flag[1][0])
 
@@ -91,8 +94,10 @@ class CellularAutomata():
         path, _ = finder.find_path(start, end, self.grid_cellular_map)
 
         if(path == []):
-            print("No path")
-            print(self.player.interact("leave", text="No path found"))
+            res = self.player.interact("leave", text="No path found")
+            if(self.debug):
+                print("No path")
+                print(res)
             return 2
 
         # print(self.player.status("look"))
@@ -118,39 +123,49 @@ class CellularAutomata():
                 direction = "E"
             
             command_mov = self.player.interact("move", direction)
-            print(command_mov)
+            if(self.debug):
+                print(command_mov)
 
             # Victory
             if(self.raw_map[path_x][path_y] == self.flag_symbol):
-                print(self.player.status("status"))
-                print(self.player.interact("leave", text="Win Game"))
-                print("Current player is in: ", path_x, path_y)
+                stat = self.player.status("status")
+                leave = self.player.interact("leave", text="Win Game")
+                if(self.debug):
+                    print(stat)
+                    print(leave)
+                    print("Current player is in: ", path_x, path_y)
                 self.player.finished=True
                 return 1
 
             if("blocked" not in command_mov):
                 self.player_position = (path_x, path_y)
             else:
-                print("I'm here with the player: "+self.player.player_name)
+                if(self.debug):
+                    print("I'm here with the player: "+self.player.player_name)
                 result = self.player.status("status")
                 index=result.find("GA: name="+self.player.game_name+" "+"state=") 
                 condition=result[index+9+len(str(self.player.game_name))+7]
                 if(condition.lower()!="a"):
-                      print(self.player.interact("leave", text="Game finished, no win!"))
-                      return 2
+                    leave = self.player.interact("leave", text="Game finished, no win!") 
+                    if(self.debug):
+                        print(leave)
+                    return 2
                 else:
                     if(self.player.is_impostor):
                         check="PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=0 x="+str(self.player_position[0])+" y="+str(self.player_position[1])+" state=ACTIVE"
                     else:
                         check="PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=1 x="+str(self.player_position[0])+" y="+str(self.player_position[1])+" state=ACTIVE"
-                    print(check)
-                    print(result)
+                    if(self.debug):
+                        print(check)
+                        print(result)
                     ### se giocatore attivo####
                     if(check in result):
                     ###No path!
                         if(path == []):
-                            print("No path")
-                            print(self.player.interact("leave", text="No path found"))
+                            leave = self.player.interact("leave", text="No path found") 
+                            if(self.debug):
+                                print(leave)
+                                print("No path")
                             return 2
                         else: #### Ricomincio!
                             self.update()
@@ -160,8 +175,10 @@ class CellularAutomata():
                             i=1
                     ### se giocatore non attivo####
                     else:
-                        print("Player killed")
-                        print(self.player.interact("leave", text="Player killed, RIP!"))
+                        leave = self.player.interact("leave", text="Player killed, RIP!")
+                        if(self.debug):
+                            print(leave)
+                            print("Player killed")
                         return 2
 
                      
@@ -210,22 +227,25 @@ class CellularAutomata():
                 elif (self.is_enemy(elem) and blocked==False):
                     # Attualmente se ci sono 2 nemici sulla stessa linea spara 2 volte reinserendo il primo
                     #Quando verà implementata la kill sarà ok
-                    print("***SHOOT***")
-                    if(self.player.is_impostor):
-                        print("IMPOSTOR-> ", self.player.game_symbol, " SHOOT ",elem)
+                    if(self.debug):
+                        print("***SHOOT***")
+                        if(self.player.is_impostor):
+                            print("IMPOSTOR-> ", self.player.game_symbol, " SHOOT ",elem)
                         
-                    print("Elem: ",elem)
+                        print("Elem: ",elem)
                     result = self.player.interact("shoot", direction=key)
-                    print("RESULT: ", result)
-                    if(result.lower().find("error")!=-1): 
-                        print('Cannot Shoot')
+                    if(self.debug):
+                        print("RESULT: ", result)
+                        if(result.lower().find("error")!=-1): 
+                            print('Cannot Shoot')
                     else:
                         self.already_shoot.append(elem)
-                        print("ARRAY SHOOTED")
-                        print(self.already_shoot)
-                    print("Vettore controlato: ")
-                    print(key+": " + str(dict_shoot_direction[key]))
-                    print("***ENDSHOOT***")
+                        if(self.debug):
+                            print("ARRAY SHOOTED")
+                            print(self.already_shoot)
+                            print("Vettore controlato: ")
+                            print(key+": " + str(dict_shoot_direction[key]))
+                            print("***ENDSHOOT***")
 
         if(not(self.last_shot)):
             return False
@@ -263,7 +283,8 @@ class CellularAutomata():
                 break
             else:
                 if(time.clock()-last_nop>10):
-                    print(self.player.interact("nop"))
+                    if(self.debug):
+                        print(self.player.interact("nop"))
                     last_nop=time.clock()
                 
                 
@@ -291,59 +312,60 @@ class CellularAutomata():
 
     ##############################################UTILITY
     def plot_grid(self):
-        try:
-            os.makedirs(str(self.player.game_name))
-        except OSError as e:
-            pass
-        try:
-            cellcolours = np.empty_like(self.raw_map, dtype='object')
-        except Exception as e:
-            print(e)
-        if(self.last_shot):
-            player_color='k'
-        else:
-            player_color='w'
+        if(self.debug):
+            try:
+                os.makedirs(str(self.player.game_name))
+            except OSError as e:
+                pass
+            try:
+                cellcolours = np.empty_like(self.raw_map, dtype='object')
+            except Exception as e:
+                print(e)
+            if(self.last_shot):
+                player_color='k'
+            else:
+                player_color='w'
 
-        for row in range(len(self.raw_map)):
-            for column in range(len(self.raw_map[0])):
-                current_cell = self.raw_map[row][column]
-                if(current_cell == "#"):
-                    cellcolours[row][column] = 'k'
-                elif(current_cell == "."):
-                    cellcolours[row][column] = 'g'
-                elif(current_cell == "@"):
-                    cellcolours[row][column] = 'b'
-                elif(current_cell == self.flag_symbol.swapcase()):
-                    cellcolours[row][column] = 'r'
-                elif(current_cell == self.flag_symbol):
-                    cellcolours[row][column] = 'r'
-                elif(current_cell == self.player.game_symbol):
-                    cellcolours[row][column] = player_color
-                elif(current_cell == "~"):
-                    cellcolours[row][column] = 'c'
-                elif(current_cell == "$"):
-                    cellcolours[row][column] = 'y'
-                elif(current_cell == "!"):
-                    cellcolours[row][column] = '0.75'
-                elif(current_cell == "&"):
-                    cellcolours[row][column] = '0.50'
-                else:
-                    cellcolours[row][column] = 'm'
-        try:
-            fig, ax = plt.subplots(
-            )
-            plt.tight_layout()
-            ax.axis('off')
-            the_table = ax.table(cellColours=cellcolours, loc='center')
-            plt.savefig("./"+str(self.player.game_name)+"/fig_"+datetime.datetime.now(
-            ).strftime("%Y%m%d_%H%M%S")+"_"+str(self.player.player_name)+".png")
-            plt.close(fig)
+            for row in range(len(self.raw_map)):
+                for column in range(len(self.raw_map[0])):
+                    current_cell = self.raw_map[row][column]
+                    if(current_cell == "#"):
+                        cellcolours[row][column] = 'k'
+                    elif(current_cell == "."):
+                        cellcolours[row][column] = 'g'
+                    elif(current_cell == "@"):
+                        cellcolours[row][column] = 'b'
+                    elif(current_cell == self.flag_symbol.swapcase()):
+                        cellcolours[row][column] = 'r'
+                    elif(current_cell == self.flag_symbol):
+                        cellcolours[row][column] = 'r'
+                    elif(current_cell == self.player.game_symbol):
+                        cellcolours[row][column] = player_color
+                    elif(current_cell == "~"):
+                        cellcolours[row][column] = 'c'
+                    elif(current_cell == "$"):
+                        cellcolours[row][column] = 'y'
+                    elif(current_cell == "!"):
+                        cellcolours[row][column] = '0.75'
+                    elif(current_cell == "&"):
+                        cellcolours[row][column] = '0.50'
+                    else:
+                        cellcolours[row][column] = 'm'
+            try:
+                fig, ax = plt.subplots(
+                )
+                plt.tight_layout()
+                ax.axis('off')
+                the_table = ax.table(cellColours=cellcolours, loc='center')
+                plt.savefig("./"+str(self.player.game_name)+"/fig_"+datetime.datetime.now(
+                ).strftime("%Y%m%d_%H%M%S")+"_"+str(self.player.player_name)+".png")
+                plt.close(fig)
 
-        except Exception as e:
-            print(e)
-        
-        self.last_shot=False
-
-   
-        
+            except Exception as e:
+                print(e)
             
+            self.last_shot=False
+
+       
+            
+                
