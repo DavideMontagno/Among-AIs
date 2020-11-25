@@ -35,7 +35,6 @@ class CellularAutomata():
         self.already_shoot=[]
         self.last_shot=False
         self.flag = np.where(self.raw_map == self.flag_symbol)
-
         if(self.flag == []):
             res = self.player.interact("leave", text="No Flag in Map")
             if(self.debug):
