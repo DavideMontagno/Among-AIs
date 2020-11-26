@@ -18,6 +18,7 @@ def start_game(cellular_a):
 def start_chat(cellular_chat):
     cellular_chat.read_chat()
     pass
+
 if __name__ == "__main__":
     
     try:
@@ -27,35 +28,43 @@ if __name__ == "__main__":
         input('wait')
         png_dir = str(NAME_GAME)
 
-        pl1=Player(NAME_GAME,NAME_GAME,"pl1")
+        pl1=Player(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="9-1")
         print(pl1.manage_game("new"))
         #JOIN GAME
         print(pl1.interact("join"))
         pl1.command_chat("name")
         pl1.command_chat("join")
-        pl2=Player(NAME_GAME,NAME_GAME,"ai9_pl2")
+
+        pl2=Player(NAME_GAME,NAME_GAME,"ai9_pl2",player_descr="9-1")
         print(pl2.interact("join"))
         pl2.command_chat("name")
         pl2.command_chat("join")
+
         #print(pl2.chat("join", chat_name=NAME_GAME))
-        pl3=Player(NAME_GAME,NAME_GAME,"pl3")
+        pl3=Player(NAME_GAME,NAME_GAME,"pl3",player_descr="9-1")
         print(pl3.interact("join"))
         #print(pl3.chat("join", chat_name=NAME_GAME))
-        pl4=Player(NAME_GAME,NAME_GAME,"pl4")
+
+        pl4=Player(NAME_GAME,NAME_GAME,"pl4",player_descr="9-1")
         print(pl4.interact("join"))
         #print(pl4.chat("join", chat_name=NAME_GAME))
-        pl5=Player(NAME_GAME,NAME_GAME,"pl5")
+
+        pl5=Player(NAME_GAME,NAME_GAME,"pl5",player_descr="9-1")
         print(pl5.interact("join"))
         #print(pl5.chat("join", chat_name=NAME_GAME))
-        pl6=Player(NAME_GAME,NAME_GAME,"pl6")
+
+        pl6=Player(NAME_GAME,NAME_GAME,"pl6",player_descr="9-1")
         print(pl6.interact("join"))
         #print(pl6.chat("join", chat_name=NAME_GAME))
-        pl7=Player(NAME_GAME,NAME_GAME,"pl7")
+
+        pl7=Player(NAME_GAME,NAME_GAME,"pl7",player_descr="9-1")
         print(pl7.interact("join"))
         #print(pl7.chat("join", chat_name=NAME_GAME))
-        pl8=Player(NAME_GAME,NAME_GAME,"pl8")
+
+        pl8=Player(NAME_GAME,NAME_GAME,"pl8",player_descr="9-1")
         print(pl8.interact("join"))
         #print(pl8.chat("join", chat_name=NAME_GAME))
+
         '''pl9=Player(NAME_GAME,"pl9")
         print(pl9.interact("join"))
         #print(pl9.chat("join", chat_name=NAME_GAME))
@@ -88,13 +97,14 @@ if __name__ == "__main__":
         #print(pl1.status("look"))
 
 
-        ca=CellularAutomata(pl1)
-        # ca = CellularAutomata(pl1, debug=False) # to Debug
+        #ca=CellularAutomata(pl1)
+        ca = CellularAutomata(pl1, debug=True) # to Debug
         ca_chat = CellularAutomata_chat(pl1)
         #result = ca.play()
-
+        
         t1 = multiprocessing.Process(target=start_game, args=(ca,))
         c1 = multiprocessing.Process(target=start_chat, args=(ca_chat,))
+        '''
         ca2=CellularAutomata(pl2)
         ca_chat2 = CellularAutomata_chat(pl2)
         t2 = multiprocessing.Process(target=start_game, args=(ca2,))
@@ -111,7 +121,7 @@ if __name__ == "__main__":
         t7 = multiprocessing.Process(target=start_game, args=(ca7,))
         ca8=CellularAutomata(pl8)
         t8 = multiprocessing.Process(target=start_game, args=(ca8,))
-        '''ca9=CellularAutomata(pl9)
+        ca9=CellularAutomata(pl9)
         t9 = multiprocessing.Process(target=start_game, args=(ca9,))
         ca10=CellularAutomata(pl10)
         t10 = multiprocessing.Process(target=start_game, args=(ca10,))
@@ -125,7 +135,7 @@ if __name__ == "__main__":
         t14 = multiprocessing.Process(target=start_game, args=(ca14,))
         ca15=CellularAutomata(pl15)
         t15 = multiprocessing.Process(target=start_game, args=(ca15,))
-'''
+        '''
         threads = [t1]# , c1] ,t2,c2],t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
         #threads = [t1,c1]
         for n in range(len(threads)):
@@ -134,7 +144,9 @@ if __name__ == "__main__":
         for n in range(len(threads)):
             threads[n].join()
         name="work"
-        '''if(result==True):
+
+        '''
+        if(result==True):
             count = count+1
             name="work_"
         else:
