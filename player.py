@@ -3,9 +3,9 @@ import time
 import numpy as np
 import re
 
-time_sleep = 0.47
+time_sleep = 0.50
 
-time_response = 0.15
+time_response = 0.2
 
 class Player:
     def __init__(self,  game_name, chat_name, player_name, player_nature="AI", player_descr="", host="margot.di.unipi.it", port=8421, chat_port=8422):
@@ -68,13 +68,13 @@ class Player:
         actual = switcher.get(command, "Invalid Command")
         if(command != "nop"):
             self.wait_last_command()
-
+        
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
             b"\n", time_response).decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
-
+        
         if(command == "join"):
             self.set_information()
 
@@ -87,13 +87,14 @@ class Player:
         actual = switcher.get(command, "Invalid Command")
 
         self.wait_last_command()
-
+    
         self.connection.write(bytes(actual, "utf-8"))
-
         result = str(self.connection.read_until(
             b"\xc2\xbb\n", time_response).decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
+
+        
         return result
 
     def manage_game(self, command):
@@ -106,6 +107,7 @@ class Player:
         self.wait_last_command()
 
         self.connection.write(bytes(actual, "utf-8"))
+
         result = str(self.connection.read_until(
             b"\n", time_response).decode("utf-8"))
 
