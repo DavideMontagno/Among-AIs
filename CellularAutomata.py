@@ -33,9 +33,6 @@ class CellularAutomata():
 
         self.grid_cellular_map = Grid()
 
-    def idle(self):
-        pass 
-
     def update(self):
         self.raw_map = self.player.process_map()
 
