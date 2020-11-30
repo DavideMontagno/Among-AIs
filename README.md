@@ -1,7 +1,7 @@
 # Refactoring
 
 TODO:
-- [ ] Merge the new funcions of the CellularAutomata
+- [x] Merge the new funcions of the CellularAutomata
 - [x] Decouples the visual component from the real agent
 - [ ] Refactor the CellularAutomata class
 - [x] Remove the plot part
