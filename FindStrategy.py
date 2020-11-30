@@ -1,8 +1,9 @@
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
 from pathfinding.finder.a_star import AStarFinder
+import numpy as np
 
-class FindStrategy():
+class VisualComponent():
     def __init__(self, player):
         self.player = player
         self.map = self.player.process_map()
@@ -52,3 +53,6 @@ class FindStrategy():
 
     def getPlayerGameSymbol(self):
         return self.game_symbol
+
+    def getFlagPosition(self):
+        return np.where(self.map == self.game_symbol)
