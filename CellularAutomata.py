@@ -6,18 +6,18 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
 from pathfinding.finder.a_star import AStarFinder
 import datetime
-from FindStrategy import FindStrategy
+from VisualComponent import VisualComponent
 
 class CellularAutomata():
     def __init__(self, player, debug=False):
         self.finished = False
         self.player = player
         self.debug = debug
-        strategy = FindStrategy(player)
-        self.flag_symbol = strategy.getFlag()
-        self.loyality = strategy.getLoyality()
-        self.player_position = strategy.getPlayerPosition()
-        self.game_symbol = strategy.getPlayerGameSymbol()
+        self.visual = VisualComponent(player)
+        self.flag_symbol = self.visual.getFlag()
+        self.loyality = self.visual.getLoyality()
+        self.player_position = self.visual.getPlayerPosition()
+        self.game_symbol = self.visual.getPlayerGameSymbol()
         self.raw_map = self.player.process_map()
 
         self.already_shoot = []
@@ -34,7 +34,7 @@ class CellularAutomata():
         self.grid_cellular_map = Grid()
 
     def idle(self):
-        pass
+        pass 
 
     def update(self):
         self.raw_map = self.player.process_map()
