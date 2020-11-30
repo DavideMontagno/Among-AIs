@@ -29,32 +29,6 @@ class Player:
         while(time.clock()-self.timestamp_last_command <= time_sleep):
             pass
 
-    def set_information(self):
-        # Get game symbol
-        result = self.status("status")
-        index = result.find("ME: symbol=")
-        self.game_symbol = result[index+11]
-
-        # Get impostor
-        index = result.find("loyalty=")
-        if(result[index+8] == "0"):
-            self.is_impostor = True
-
-        # Get position
-        index = result.find("PL: symbol="+self.game_symbol +
-                            " name="+self.player_name+" team=")
-        x1 = result[index+23+len(self.game_symbol)+len(self.player_name)+4]
-        x2 = result[index+23+len(self.game_symbol)+len(self.player_name)+5]
-        if(x2 == " "):
-            y1 = result[index+23+len(self.game_symbol)+len(self.player_name)+8]
-            y2 = result[index+23+len(self.game_symbol)+len(self.player_name)+9]
-        else:
-            y1 = result[index+23+len(self.game_symbol)+len(self.player_name)+9]
-            y2 = result[index+23+len(self.game_symbol) +
-                        len(self.player_name)+10]
-
-        self.player_position = (int(y1+y2), int(x1+x2))
-
     def interact(self, command, direction="", text=""):
 
         switcher = {"move": self.game_name+" MOVE "+direction+"\n",
@@ -74,10 +48,6 @@ class Player:
             b"\n", time_response).decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
-        
-        if(command == "join"):
-            self.set_information()
-
         return actual+" "+result
 
     def status(self, command):

@@ -25,7 +25,6 @@ if __name__ == "__main__":
         #CREATION
         NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         print(NAME_GAME)
-        input('wait')
         png_dir = str(NAME_GAME)
 
         pl1=Player(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="9-1")
@@ -65,28 +64,6 @@ if __name__ == "__main__":
         print(pl8.interact("join"))
         #print(pl8.chat("join", chat_name=NAME_GAME))
 
-        '''pl9=Player(NAME_GAME,"pl9")
-        print(pl9.interact("join"))
-        #print(pl9.chat("join", chat_name=NAME_GAME))
-        pl10=Player(NAME_GAME,"pl10")
-        print(pl10.interact("join"))
-        #print(pl10.chat("join", chat_name=NAME_GAME))
-        pl11=Player(NAME_GAME,"pl11")
-        print(pl11.interact("join"))
-        #print(pl11.chat("join", chat_name=NAME_GAME))
-        pl12=Player(NAME_GAME,"pl12")
-        print(pl12.interact("join"))
-        #print(pl12.chat("join", chat_name=NAME_GAME))
-        pl13=Player(NAME_GAME,"pl13")
-        print(pl13.interact("join"))
-        #print(pl13.chat("join", chat_name=NAME_GAME))
-        pl14=Player(NAME_GAME,"pl14")
-        print(pl14.interact("join"))
-        #print(pl14.chat("join", chat_name=NAME_GAME))
-        pl15=Player(NAME_GAME,"pl15")
-        print(pl15.interact("join"))
-        #print(pl15.chat("join", chat_name=NAME_GAME))
-        #input("Press Enter to continue...")'''
         # START GAME
        
 
@@ -98,7 +75,7 @@ if __name__ == "__main__":
 
 
         #ca=CellularAutomata(pl1)
-        ca = CellularAutomata(pl1, debug=True) # to Debug
+        ca = CellularAutomata(pl1, debug=False) # to Debug
         ca_chat = CellularAutomata_chat(pl1)
         #result = ca.play()
         
@@ -145,25 +122,5 @@ if __name__ == "__main__":
             threads[n].join()
         name="work"
 
-        '''
-        if(result==True):
-            count = count+1
-            name="work_"
-        else:
-            name="error"'''
-
-        print(pl1.status("status"))
-        '''images = []
-        for file_name in os.listdir(png_dir):
-            if file_name.endswith('.png'):
-                file_path = os.path.join(png_dir, file_name)
-                images.append(imageio.imread(file_path))
-                os.remove(file_path)
-        imageio.mimsave(png_gif_dir+name+NAME_GAME+".gif", images)
-        os.rmdir(png_dir)
-        print("finished")'''
-
     except Exception as e:
         print(e)
-    '''print("Executed correctly: "+str(count)+" on "+str(tot))
-    print("Finito.")'''

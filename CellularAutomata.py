@@ -1,4 +1,3 @@
-import random
 import pickle
 import time
 from scipy.spatial import distance
@@ -6,27 +5,19 @@ import numpy as np
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
 from pathfinding.finder.a_star import AStarFinder
-import sys
-import os
-
 import datetime
-import matplotlib.pyplot as plt
-
-
-# Debug part
-# Path faster
-
+from FindStrategy import FindStrategy
 
 class CellularAutomata():
     def __init__(self, player, debug=False):
         self.finished = False
         self.player = player
         self.debug = debug
-
-        if(self.player.game_symbol.islower()):
-            self.flag_symbol = "X"
-        else:
-            self.flag_symbol = "x"
+        strategy = FindStrategy(player)
+        self.flag_symbol = strategy.getFlag()
+        self.loyality = strategy.getLoyality()
+        self.player_position = strategy.getPlayerPosition()
+        self.game_symbol = strategy.getPlayerGameSymbol()
         self.raw_map = self.player.process_map()
 
         self.already_shoot = []
@@ -42,9 +33,11 @@ class CellularAutomata():
 
         self.grid_cellular_map = Grid()
 
+    def idle(self):
+        pass
+
     def update(self):
         self.raw_map = self.player.process_map()
-        # self.plot_grid()
 
         self.grid_cellular_map = Grid(
             width=len(self.raw_map), height=len(self.raw_map[0]))
@@ -75,7 +68,7 @@ class CellularAutomata():
     def move(self):
 
         start = self.grid_cellular_map.node(
-            self.player.player_position[0], self.player.player_position[1])
+            self.player_position[0], self.player_position[1])
         end = self.grid_cellular_map.node(self.flag[0], self.flag[1])
 
         self.grid_cellular_map.cleanup()
@@ -103,11 +96,11 @@ class CellularAutomata():
             path_y = path[i][1]
 
             direction = ""
-            if(self.player.player_position[0] < path_x):
+            if(self.player_position[0] < path_x):
                 direction = "S"
-            elif(self.player.player_position[0] > path_x):
+            elif(self.player_position[0] > path_x):
                 direction = "N"
-            elif(self.player.player_position[1] > path_y):
+            elif(self.player_position[1] > path_y):
                 direction = "W"
             else:
                 direction = "E"
@@ -128,7 +121,7 @@ class CellularAutomata():
                 return 1
 
             if("blocked" not in command_mov):
-                self.player.player_position = (path_x, path_y)
+                self.player_position = (path_x, path_y)
             else:
                 if(self.debug):
                     print("I'm here with the player: "+self.player.player_name)
@@ -144,14 +137,14 @@ class CellularAutomata():
                         print(leave)
                     return 2
                 else:
-                    if(self.player.is_impostor):
-                        check = "PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=0 x=" + \
-                            str(self.player.player_position[0])+" y="+str(
-                                self.player.player_position[1])+" state=ACTIVE"
+                    if(self.loyality):
+                        check = "PL: symbol="+self.game_symbol+" name="+self.player.player_name+" team=0 x=" + \
+                            str(self.player_position[0])+" y="+str(
+                                self.player_position[1])+" state=ACTIVE"
                     else:
-                        check = "PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=1 x=" + \
-                            str(self.player.player_position[0])+" y="+str(
-                                self.player.player_position[1])+" state=ACTIVE"
+                        check = "PL: symbol="+self.game_symbol+" name="+self.player.player_name+" team=1 x=" + \
+                            str(self.player_position[0])+" y="+str(
+                                self.player_position[1])+" state=ACTIVE"
                     if(self.debug):
                         print(check)
                         print(result)
@@ -168,7 +161,7 @@ class CellularAutomata():
                         else:  # Ricomincio!
                             self.update()
                             start = self.grid_cellular_map.node(
-                                self.player.player_position[0], self.player.player_position[1])
+                                self.player_position[0], self.player_position[1])
                             path, _ = finder.find_path(
                                 start, end, self.grid_cellular_map)
                             i = 1
@@ -190,34 +183,34 @@ class CellularAutomata():
     def attack(self):
 
         dict_shoot_direction = {
-            "N": np.flip(self.raw_map[:self.player.player_position[0], self.player.player_position[1]]),
-            "W": np.flip(self.raw_map[self.player.player_position[0], :self.player.player_position[1]]),
+            "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
+            "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]]),
             "S": [],
             "E": []
         }
 
         # Check bordi della mappa
 
-        if(self.player.player_position[0] == (len(self.raw_map[0])-1)):
+        if(self.player_position[0] == (len(self.raw_map[0])-1)):
 
-            dict_shoot_direction["S"] = self.raw_map[self.player.player_position[0]:, self.player.player_position[1]]
+            dict_shoot_direction["S"] = self.raw_map[self.player_position[0]:, self.player_position[1]]
 
-            if(self.player.player_position[1] != (len(self.raw_map[0])-1)):
-                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
-                                                         self.player.player_position[1]+1:]
+            if(self.player_position[1] != (len(self.raw_map[0])-1)):
+                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
+                                                         self.player_position[1]+1:]
             else:
-                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
-                                                         self.player.player_position[1]:]
+                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
+                                                         self.player_position[1]:]
         else:
-            dict_shoot_direction["S"] = self.raw_map[self.player.player_position[0] +
-                                                     1:, self.player.player_position[1]]
+            dict_shoot_direction["S"] = self.raw_map[self.player_position[0] +
+                                                     1:, self.player_position[1]]
 
-            if(self.player.player_position[1] == (len(self.raw_map[0])-1)):
-                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
-                                                         self.player.player_position[1]:]
+            if(self.player_position[1] == (len(self.raw_map[0])-1)):
+                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
+                                                         self.player_position[1]:]
             else:
-                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
-                                                         self.player.player_position[1]+1:]
+                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
+                                                         self.player_position[1]+1:]
 
         self.last_shot = False
         for key in dict_shoot_direction:
@@ -232,8 +225,8 @@ class CellularAutomata():
 
                     if(self.debug):
                         print("***SHOOT***")
-                        if(self.player.is_impostor):
-                            print("IMPOSTOR-> ", self.player.game_symbol,
+                        if(self.loyality):
+                            print("IMPOSTOR-> ", self.game_symbol,
                                   " SHOOT ", elem)
                         print("Elem: ", elem)
 
@@ -257,15 +250,15 @@ class CellularAutomata():
     def is_enemy(self, elem):
         if(elem in ['@', '.', '~', '$', '!']):
             return False
-        if(not self.player.is_impostor):
-            if(self.player.game_symbol.islower() and elem.islower()):
+        if(not self.loyality):
+            if(self.game_symbol.islower() and elem.islower()):
                 return False
-            if(self.player.game_symbol.isupper() and elem.isupper()):
+            if(self.game_symbol.isupper() and elem.isupper()):
                 return False
         else:
-            if(self.player.game_symbol.islower() and elem.isupper()):
+            if(self.game_symbol.islower() and elem.isupper()):
                 return False
-            if(self.player.game_symbol.isupper() and elem.islower()):
+            if(self.game_symbol.isupper() and elem.islower()):
                 return False
         return True
 
@@ -307,58 +300,3 @@ class CellularAutomata():
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                     # print(self.player.command_chat("leave"))
                     return False
-
-    # UTILITY
-
-    def plot_grid(self):
-        if(self.debug):
-            try:
-                os.makedirs(str(self.player.game_name))
-            except OSError as e:
-                pass
-            try:
-                cellcolours = np.empty_like(self.raw_map, dtype='object')
-            except Exception as e:
-                print(e)
-            if(self.last_shot):
-                player_color = 'k'
-            else:
-                player_color = 'w'
-
-            for row in range(len(self.raw_map)):
-                for column in range(len(self.raw_map[0])):
-                    current_cell = self.raw_map[row][column]
-                    if(current_cell == "#"):
-                        cellcolours[row][column] = 'k'
-                    elif(current_cell == "."):
-                        cellcolours[row][column] = 'g'
-                    elif(current_cell == "@"):
-                        cellcolours[row][column] = 'b'
-                    elif(current_cell == self.flag_symbol.swapcase()):
-                        cellcolours[row][column] = 'r'
-                    elif(current_cell == self.flag_symbol):
-                        cellcolours[row][column] = 'r'
-                    elif(current_cell == self.player.game_symbol):
-                        cellcolours[row][column] = player_color
-                    elif(current_cell == "~"):
-                        cellcolours[row][column] = 'c'
-                    elif(current_cell == "$"):
-                        cellcolours[row][column] = 'y'
-                    elif(current_cell == "!"):
-                        cellcolours[row][column] = '0.75'
-                    elif(current_cell == "&"):
-                        cellcolours[row][column] = '0.50'
-                    else:
-                        cellcolours[row][column] = 'm'
-            try:
-                fig, ax = plt.subplots(
-                )
-                plt.tight_layout()
-                ax.axis('off')
-                the_table = ax.table(cellColours=cellcolours, loc='center')
-                plt.savefig("./"+str(self.player.game_name)+"/fig_"+datetime.datetime.now(
-                ).strftime("%Y%m%d_%H%M%S")+"_"+str(self.player.player_name)+".png")
-                plt.close(fig)
-
-            except Exception as e:
-                print(e)
