@@ -18,6 +18,7 @@ class CellularAutomata():
         self.loyality = self.visual.getLoyality()
         self.player_position = self.visual.getPlayerPosition()
         self.game_symbol = self.visual.getPlayerGameSymbol()
+        self.enemies = self.visual.get_enemies()
         self.raw_map = self.player.process_map()
 
         self.already_shoot = []
@@ -30,8 +31,9 @@ class CellularAutomata():
                 print("Error Flag")
 
         self.flag = (self.flag[0][0], self.flag[1][0])
-
         self.grid_cellular_map = Grid()
+        self.consecutive_moves = 1
+        self.path = []
 
     def update(self):
         self.raw_map = self.player.process_map()
@@ -63,151 +65,121 @@ class CellularAutomata():
                     x=row, y=column, walkable=walkable, weight=result)
 
     def move(self):
+        # Prima Mossa o errore precedente
+        if(self.path==[]):
+            start = self.grid_cellular_map.node(
+                self.player.player_position[0], self.player.player_position[1])
+            end = self.grid_cellular_map.node(self.flag[0], self.flag[1])
 
-        start = self.grid_cellular_map.node(
-            self.player_position[0], self.player_position[1])
-        end = self.grid_cellular_map.node(self.flag[0], self.flag[1])
+            self.grid_cellular_map.cleanup()
+            finder = AStarFinder(
+                diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
+            self.path, _ = finder.find_path(start, end, self.grid_cellular_map)
 
-        self.grid_cellular_map.cleanup()
-        finder = AStarFinder(
-            diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
-        path, _ = finder.find_path(start, end, self.grid_cellular_map)
+            self.n_moves=1
+            # Path non trovato
+            if(self.path == []):
+                res = self.player.interact("leave", text="No path found")
+                if(self.debug):
+                    print("No path")
+                    print(res)
+                return 2
 
-        if(path == []):
-            res = self.player.interact("leave", text="No path found")
-            if(self.debug):
-                print("No path")
-                print(res)
-            return 2
-
-        # print(self.player.status("look"))
-        # print(path)
-        #print("Next_symbol: ", self.raw_map[path[1][0]][path[1][1]])
-        # number of movements/movement
-        n_movement = 2
-        for i in range(1, n_movement):
+        
+        for i in range(0, self.consecutive_moves):
 
             self.player.command_chat("post", text_chat="I'm moving")
-            #print("Movement "+self.player.player_name+" "+str(i)+": ",path[i])
-            path_x = path[i][0]
-            path_y = path[i][1]
+
+            path_x = self.path[self.n_moves][0]
+            path_y = self.path[self.n_moves][1]
 
             direction = ""
-            if(self.player_position[0] < path_x):
+            if(self.player.player_position[0] < path_x):
                 direction = "S"
-            elif(self.player_position[0] > path_x):
+            elif(self.player.player_position[0] > path_x):
                 direction = "N"
-            elif(self.player_position[1] > path_y):
+            elif(self.player.player_position[1] > path_y):
                 direction = "W"
             else:
                 direction = "E"
 
             command_mov = self.player.interact("move", direction)
+            self.n_moves+=1
             if(self.debug):
                 print(command_mov)
 
             # Victory
             if(self.raw_map[path_x][path_y] == self.flag_symbol):
-                stat = self.player.status("status")
-                leave = self.player.interact("leave", text="Win Game")
-                if(self.debug):
-                    print(stat)
-                    print(leave)
-                    print("Current player is in: ", path_x, path_y)
-                self.player.finished = True
                 return 1
 
             if("blocked" not in command_mov):
-                self.player_position = (path_x, path_y)
+                self.player.player_position = (path_x, path_y)
             else:
                 if(self.debug):
                     print("I'm here with the player: "+self.player.player_name)
+
                 result = self.player.status("status")
-                index = result.find(
-                    "GA: name="+self.player.game_name+" "+"state=")
+                index = result.find("GA: name="+self.player.game_name+" "+"state=")
                 condition = result[index+9+len(str(self.player.game_name))+7]
-                # SE IL GIOCO È FINITO =>
-                if(condition.lower() != "a"):
-                    leave = self.player.interact(
-                        "leave", text="Game finished, no win!")
-                    if(self.debug):
-                        print(leave)
+
+                
+                if(condition.lower() != "a"):# SE IL GIOCO È FINITO #
+                    print("Game Finished, no win")
                     return 2
                 else:
-                    if(self.loyality):
-                        check = "PL: symbol="+self.game_symbol+" name="+self.player.player_name+" team=0 x=" + \
-                            str(self.player_position[0])+" y="+str(
-                                self.player_position[1])+" state=ACTIVE"
+                    if(self.player.is_impostor):
+                        check = "PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=0 x=" + \
+                            str(self.player.player_position[0])+" y="+str(
+                                self.player.player_position[1])+" state=ACTIVE"
                     else:
-                        check = "PL: symbol="+self.game_symbol+" name="+self.player.player_name+" team=1 x=" + \
-                            str(self.player_position[0])+" y="+str(
-                                self.player_position[1])+" state=ACTIVE"
+                        check = "PL: symbol="+self.player.game_symbol+" name="+self.player.player_name+" team=1 x=" + \
+                            str(self.player.player_position[0])+" y="+str(
+                                self.player.player_position[1])+" state=ACTIVE"
                     if(self.debug):
                         print(check)
                         print(result)
-                    ### se giocatore attivo####
-                    if(check in result):
-                        # Se nessun path
-                        if(path == []):
-                            leave = self.player.interact(
-                                "leave", text="No path found")
-                            if(self.debug):
-                                print(leave)
-                                print("No path")
-                            return 2
-                        else:  # Ricomincio!
-                            self.update()
-                            start = self.grid_cellular_map.node(
-                                self.player_position[0], self.player_position[1])
-                            path, _ = finder.find_path(
-                                start, end, self.grid_cellular_map)
-                            i = 1
-                    ### se giocatore non attivo####
-                    else:
-                        leave = self.player.interact(
-                            "leave", text="Player killed, RIP!")
+
+                    
+                    if(check in result):### se giocatore attivo va ricalcolato il path####
+                        self.path=[]
+                    else:### se giocatore non attivo####
                         if(self.debug):
-                            print(leave)
                             print("Player killed")
                         return 2
-
-                '''print(self.player.interact("leave", text="Movement fail"))
-                print("Path Blocked")
-                return 2'''
 
         return 0
 
     def attack(self):
 
         dict_shoot_direction = {
-            "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
-            "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]]),
+            "N": np.flip(self.raw_map[:self.player.player_position[0], self.player.player_position[1]]),
+            "W": np.flip(self.raw_map[self.player.player_position[0], :self.player.player_position[1]]),
             "S": [],
             "E": []
         }
 
         # Check bordi della mappa
 
-        if(self.player_position[0] == (len(self.raw_map[0])-1)):
+        if(self.player.player_position[0] == (len(self.raw_map[0])-1)):
 
-            dict_shoot_direction["S"] = self.raw_map[self.player_position[0]:, self.player_position[1]]
+            dict_shoot_direction["S"] = self.raw_map[self.player.player_position[0]:, self.player.player_position[1]]
 
-            if(self.player_position[1] != (len(self.raw_map[0])-1)):
-                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
-                                                         self.player_position[1]+1:]
+            if(self.player.player_position[1] != (len(self.raw_map[0])-1)):
+                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
+                                                         self.player.player_position[1]+1:]
             else:
-                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
-                                                         self.player_position[1]:]
+                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
+                                                         self.player.player_position[1]:]
         else:
-            dict_shoot_direction["S"] = self.raw_map[self.player_position[0] +
-                                                     1:, self.player_position[1]]
+            dict_shoot_direction["S"] = self.raw_map[self.player.player_position[0] +
+                                                     1:, self.player.player_position[1]]
 
-            if(self.player_position[1] == (len(self.raw_map[0])-1)):
-                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
-                                                         self.player_position[1]:]
+            if(self.player.player_position[1] == (len(self.raw_map[0])-1)):
+                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
+                                                         self.player.player_position[1]:]
             else:
-                dict_shoot_direction["E"] = self.raw_map[self.player_position[0],
-                                                         self.player_position[1]+1:]
+                dict_shoot_direction["E"] = self.raw_map[self.player.player_position[0],
+                                                         self.player.player_position[1]+1:]
 
         self.last_shot = False
         for key in dict_shoot_direction:
@@ -222,8 +194,8 @@ class CellularAutomata():
 
                     if(self.debug):
                         print("***SHOOT***")
-                        if(self.loyality):
-                            print("IMPOSTOR-> ", self.game_symbol,
+                        if(self.player.is_impostor):
+                            print("IMPOSTOR-> ", self.player.game_symbol,
                                   " SHOOT ", elem)
                         print("Elem: ", elem)
 
@@ -239,25 +211,16 @@ class CellularAutomata():
 
                     break   # Se spara in una direzione non controlla gli altri elementi in quella direzione
 
-        if(self.last_shot):
-            return True
-        else:
-            return False
+        return self.last_shot
 
     def is_enemy(self, elem):
         if(elem in ['@', '.', '~', '$', '!']):
             return False
-        if(not self.loyality):
-            if(self.game_symbol.islower() and elem.islower()):
-                return False
-            if(self.game_symbol.isupper() and elem.isupper()):
-                return False
-        else:
-            if(self.game_symbol.islower() and elem.isupper()):
-                return False
-            if(self.game_symbol.isupper() and elem.islower()):
-                return False
-        return True
+        if(self.enemies=="upper" and elem.isupper()):
+            return True
+        elif(self.enemies=="lower" and elem.islower()):
+            return True
+        return False
 
     def is_unshottable(self, elem):
         if(elem in ['#', '&', 'X', 'x'] or elem in self.already_shoot):
@@ -280,20 +243,24 @@ class CellularAutomata():
         while(True):
 
             self.update()
-            if(self.debug):
-                print(self.player.status("look"))
-
+            
             if(not(self.attack())):
                 result = self.move()
 
                 if(result == 1):
                     print(
                         "|||||||||||||||||||||||||||WIN|||||||||||||||||||||||||||||||||")
-
-                    # print(self.player.command_chat("leave"))
+                    stat = self.player.status("status")
+                    leave = self.player.interact("leave", text="Win Game")
+                    if(self.debug):
+                        print(stat)
+                        print(leave)
+                    self.player.finished = True
                     return True
                 if(result == 2):
                     print(
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
-                    # print(self.player.command_chat("leave"))
+                    leave = self.player.command_chat("leave")
+                    if(self.debug):
+                        print(leave)
                     return False

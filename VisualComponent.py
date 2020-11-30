@@ -34,6 +34,18 @@ class VisualComponent():
             y2 = result[index+23+len(self.game_symbol) +
                         len(self.player.player_name)+10]
 
+        #Define Enemies
+        if(self.is_impostor==False):
+            if(self.game_symbol.islower()):
+                self.player_enemies="upper"
+            else:
+                self.player_enemies="lower"
+        else:
+            if(self.game_symbol.islower()):
+                self.player_enemies="lower"
+            else:
+                self.player_enemies="upper"
+
         self.player_position = (int(y1+y2), int(x1+x2))
 
     def findStrategy(self):
@@ -56,3 +68,7 @@ class VisualComponent():
 
     def getFlagPosition(self):
         return np.where(self.map == self.game_symbol)
+
+    def get_enemies(self):
+        return self.player_enemies
+
