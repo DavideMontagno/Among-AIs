@@ -3,7 +3,7 @@
 TODO:
 - [x] Merge the new funcions of the CellularAutomata
 - [x] Decouples the visual component from the real agent
-- [ ] Rename the gameServer interface (Change in the Cellular automata too in all lines???)
+- [x] Rename the gameServer interface
 - [ ] Rename the chatServer interface
 - [ ] Refactor the CellularAutomata class
 - [x] Remove the plot part
