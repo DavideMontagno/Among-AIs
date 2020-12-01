@@ -6,7 +6,7 @@ import numpy as np
 class VisualComponent():
     def __init__(self, player):
         self.player = player
-        self.map = self.player.process_map()
+        self.raw_map = self.player.process_map()
         self.is_impostor = False
         self.set_information()
 
@@ -15,7 +15,6 @@ class VisualComponent():
         result = self.player.status("status")
         index = result.find("ME: symbol=")
         self.game_symbol = result[index+11]
-
         # Get impostor
         index = result.find("loyalty=")
         if(result[index+8] == "0"):
@@ -48,6 +47,39 @@ class VisualComponent():
 
         self.player_position = (int(y1+y2), int(x1+x2))
 
+
+    def updateGrid(self):
+        self.raw_map = self.player.process_map()
+
+        self.grid_cellular_map = Grid(
+            width=len(self.raw_map), height=len(self.raw_map[0]))
+
+        for row in range(len(self.raw_map)):
+            for column in range(len(self.raw_map[0])):
+
+                current_cell = self.raw_map[row][column]
+                walkable = True
+                if(current_cell == "#" or current_cell == "@" or current_cell == "!" or current_cell == "&" or current_cell == self.game_symbol.swapcase()):
+                    result = -1
+                    walkable = False
+                elif(current_cell == "$"):
+                    # distance.cityblock(self.flag,[row,column]).astype(int) -1
+                    result = 4
+                    walkable = True
+                elif(current_cell == self.flag):
+                    result = 1
+                    walkable = True
+                else:
+                    # distance.cityblock(self.flag,[row,column]).astype(int)
+                    result = 5
+                    walkable = True
+
+                self.grid_cellular_map.nodes[column][row] = Node(
+                    x=row, y=column, walkable=walkable, weight=result)
+
+        return self.grid_cellular_map
+
+
     def findStrategy(self):
         pass
 
@@ -65,9 +97,6 @@ class VisualComponent():
 
     def getPlayerGameSymbol(self):
         return self.game_symbol
-
-    def getFlagPosition(self):
-        return np.where(self.map == self.game_symbol)
 
     def get_enemies(self):
         return self.player_enemies
