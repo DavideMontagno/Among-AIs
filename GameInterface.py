@@ -7,7 +7,7 @@ time_sleep = 0.50
 
 time_response = 0.2
 
-class Player:
+class GameInterface:
     def __init__(self,  game_name, chat_name, player_name, player_nature="AI", player_descr="", host="margot.di.unipi.it", port=8421, chat_port=8422):
         self.host = host
         self.port = port
