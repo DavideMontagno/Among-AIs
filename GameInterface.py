@@ -110,3 +110,19 @@ class GameInterface:
         self.chat.write(bytes(actual, "utf-8"))
         if(command == "leave"):
             print("left chat correctly!")
+
+def deduction_game(self,command,player,player_nature=""):
+        switcher = {"accuse": self.game_name+" ACCUSE "+player+"\n",
+                    "judge": self.game_name+" JUDGE "+player+" "+player_nature+"\n"
+                    }
+        actual = switcher.get(command, "Invalid Command")
+
+        self.wait_last_command()
+        print(actual)
+        self.connection.write(bytes(actual, "utf-8"))
+        
+        result = str(self.connection.read_until(
+            b"\n", time_response).decode("utf-8"))
+
+        self.timestamp_last_command = time.clock()
+        return result
