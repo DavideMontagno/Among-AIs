@@ -11,6 +11,7 @@ import multiprocessing
 count=0
 png_gif_dir = "./gif/"
 tot=1
+debug = True
 
 
 def start_game(cellular_a):
@@ -27,40 +28,40 @@ if __name__ == "__main__":
         print(NAME_GAME)
         png_dir = str(NAME_GAME)
 
-        pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="9-1")
-        print(pl1.manage_game("new"))
+        pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="v0.1")
+        print(pl1.manage_game("new",'Q1B'))
         #JOIN GAME
         print(pl1.interact("join"))
         pl1.command_chat("name")
         pl1.command_chat("join")
 
-        pl2=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl2",player_descr="9-1")
+        pl2=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl2",player_descr="v0.1")
         print(pl2.interact("join"))
         pl2.command_chat("name")
         pl2.command_chat("join")
 
         #print(pl2.chat("join", chat_name=NAME_GAME))
-        pl3=GameInterface(NAME_GAME,NAME_GAME,"pl3",player_descr="9-1")
+        pl3=GameInterface(NAME_GAME,NAME_GAME,"pl3",player_descr="v0.1")
         print(pl3.interact("join"))
         #print(pl3.chat("join", chat_name=NAME_GAME))
 
-        pl4=GameInterface(NAME_GAME,NAME_GAME,"pl4",player_descr="9-1")
+        pl4=GameInterface(NAME_GAME,NAME_GAME,"pl4",player_descr="v0.1")
         print(pl4.interact("join"))
         #print(pl4.chat("join", chat_name=NAME_GAME))
 
-        pl5=GameInterface(NAME_GAME,NAME_GAME,"pl5",player_descr="9-1")
+        pl5=GameInterface(NAME_GAME,NAME_GAME,"pl5",player_descr="v0.1")
         print(pl5.interact("join"))
         #print(pl5.chat("join", chat_name=NAME_GAME))
 
-        pl6=GameInterface(NAME_GAME,NAME_GAME,"pl6",player_descr="9-1")
+        pl6=GameInterface(NAME_GAME,NAME_GAME,"pl6",player_descr="v0.1")
         print(pl6.interact("join"))
         #print(pl6.chat("join", chat_name=NAME_GAME))
 
-        pl7=GameInterface(NAME_GAME,NAME_GAME,"pl7",player_descr="9-1")
+        pl7=GameInterface(NAME_GAME,NAME_GAME,"pl7",player_descr="v0.1")
         print(pl7.interact("join"))
         #print(pl7.chat("join", chat_name=NAME_GAME))
 
-        pl8=GameInterface(NAME_GAME,NAME_GAME,"pl8",player_descr="9-1")
+        pl8=GameInterface(NAME_GAME,NAME_GAME,"pl8",player_descr="v0.1")
         print(pl8.interact("join"))
         #print(pl8.chat("join", chat_name=NAME_GAME))
 
@@ -75,8 +76,8 @@ if __name__ == "__main__":
 
 
         #ca=CellularAutomata(pl1)
-        ca = CellularAutomata(pl1, debug=False) # to Debug
-        ca_chat = CellularAutomata_chat(pl1,debug=True)
+        ca = CellularAutomata(pl1, debug=debug) # to Debug
+        ca_chat = CellularAutomata_chat(pl1,debug=debug)
         #result = ca.play()
         
         t1 = multiprocessing.Process(target=start_game, args=(ca,))
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         ca15=CellularAutomata(pl15)
         t15 = multiprocessing.Process(target=start_game, args=(ca15,))
         '''
-        threads = [t1,c1]# , c1] ,t2,c2],t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
+        threads = [t1, c1]# , c1] ,t2,c2],t2,t3,t4,t5,t6,t7,t8]#,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,c1]
         #threads = [t1,c1]
         for n in range(len(threads)):
             threads[n].start()
