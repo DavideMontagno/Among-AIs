@@ -42,7 +42,7 @@ class CellularAutomata():
             print(response)
 
         self.grid_cellular_map = Grid(
-            width=len(self.raw_map), height=len(self.raw_map[0]))
+            width=len(self.raw_map), height=len(self.raw_map[0])) # perché qui si controlla la prima posizionie nella HEIGHT(e mi trovo), ma non nella width???
 
         for row in range(len(self.raw_map)):
             for column in range(len(self.raw_map[0])):
@@ -111,9 +111,9 @@ class CellularAutomata():
             if(self.debug):
                 print(command_mov)
 
-            # Victory -------------------------- VEDERE che fare se PRIMA DEI 45 SECONDI!
-            if(self.raw_map[path_x][path_y] == self.flag_symbol):
-                return 1
+            # Da controllare se va bene inserirlo solo sotto
+            # if(self.raw_map[path_x][path_y] == self.flag_symbol):
+                # return 1
 
             if("blocked" not in command_mov):
                 self.player_position = (path_x, path_y)
@@ -125,6 +125,9 @@ class CellularAutomata():
                 index = result.find("GA: name="+self.game_interface.game_name+" "+"state=")
                 condition = result[index+9+len(str(self.game_interface.game_name))+7]
 
+                # Victory -------------------------- VEDERE che fare se PRIMA DEI 45 SECONDI!
+                if(self.raw_map[path_x][path_y] == self.flag_symbol and condition.lower() != "a"):
+                    return 1
                 
                 if(condition.lower() != "a"):# SE IL GIOCO È FINITO #
                     print("Game Finished, no win")
@@ -145,16 +148,18 @@ class CellularAutomata():
                     
                     if(check in result):### se giocatore attivo va ricalcolato il path####
                         self.path=[]
-                    else:### se giocatore non attivo####
-                        if(self.debug):
-                            print("Player killed")
-                        return 2
+
+                    # Da controllare meglio anche questa parte!!!(Non sono sicuro se sia corretto non ricalare il path perché qui non controlla se il giocatore non é attivo
+                    # else:### se giocatore non attivo####
+                    #     if(self.debug):
+                    #         print("Player killed")
+                    #     return 2
 
         return 0
 
     def attack(self):
-        print(self.game_interface.deduction_game(command="accuse",player="pl6"))
-        print(self.game_interface.deduction_game(command="judge",player="pl6",player_nature="AI"))
+        # print(self.game_interface.deduction_game(command="accuse",player="pl6"))
+        # print(self.game_interface.deduction_game(command="judge",player="pl6",player_nature="AI"))
         dict_shoot_direction = {
             "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
             "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]]),
