@@ -111,7 +111,7 @@ class GameInterface:
         if(command == "leave"):
             print("left chat correctly!")
 
-def deduction_game(self,command,player,player_nature=""):
+    def deduction_game(self,command,player,player_nature=""):
         switcher = {"accuse": self.game_name+" ACCUSE "+player+"\n",
                     "judge": self.game_name+" JUDGE "+player+" "+player_nature+"\n"
                     }

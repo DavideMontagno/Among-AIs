@@ -68,8 +68,7 @@ class CellularAutomata():
                     x=row, y=column, walkable=walkable, weight=result)
 
     def move(self):
-
-        # Prima Mossa o errore precedente
+       # Prima Mossa o errore precedente
         if(self.path==[]):
             start = self.grid_cellular_map.node(
                 self.player_position[0], self.player_position[1])
@@ -112,7 +111,7 @@ class CellularAutomata():
             if(self.debug):
                 print(command_mov)
 
-            # Victory
+            # Victory -------------------------- VEDERE che fare se PRIMA DEI 45 SECONDI!
             if(self.raw_map[path_x][path_y] == self.flag_symbol):
                 return 1
 
@@ -154,7 +153,8 @@ class CellularAutomata():
         return 0
 
     def attack(self):
-
+        print(self.game_interface.deduction_game(command="accuse",player="pl6"))
+        print(self.game_interface.deduction_game(command="judge",player="pl6",player_nature="AI"))
         dict_shoot_direction = {
             "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
             "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]]),
