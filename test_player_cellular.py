@@ -1,4 +1,4 @@
-from player import Player
+from GameInterface import GameInterface
 from CellularAutomata import CellularAutomata
 from CellularAutomata_chat import CellularAutomata_chat
 import time
@@ -25,68 +25,45 @@ if __name__ == "__main__":
         #CREATION
         NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         print(NAME_GAME)
-        input('wait')
         png_dir = str(NAME_GAME)
 
-        pl1=Player(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="9-1")
+        pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="9-1")
         print(pl1.manage_game("new"))
         #JOIN GAME
         print(pl1.interact("join"))
         pl1.command_chat("name")
         pl1.command_chat("join")
 
-        pl2=Player(NAME_GAME,NAME_GAME,"ai9_pl2",player_descr="9-1")
+        pl2=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl2",player_descr="9-1")
         print(pl2.interact("join"))
         pl2.command_chat("name")
         pl2.command_chat("join")
 
         #print(pl2.chat("join", chat_name=NAME_GAME))
-        pl3=Player(NAME_GAME,NAME_GAME,"pl3",player_descr="9-1")
+        pl3=GameInterface(NAME_GAME,NAME_GAME,"pl3",player_descr="9-1")
         print(pl3.interact("join"))
         #print(pl3.chat("join", chat_name=NAME_GAME))
 
-        pl4=Player(NAME_GAME,NAME_GAME,"pl4",player_descr="9-1")
+        pl4=GameInterface(NAME_GAME,NAME_GAME,"pl4",player_descr="9-1")
         print(pl4.interact("join"))
         #print(pl4.chat("join", chat_name=NAME_GAME))
 
-        pl5=Player(NAME_GAME,NAME_GAME,"pl5",player_descr="9-1")
+        pl5=GameInterface(NAME_GAME,NAME_GAME,"pl5",player_descr="9-1")
         print(pl5.interact("join"))
         #print(pl5.chat("join", chat_name=NAME_GAME))
 
-        pl6=Player(NAME_GAME,NAME_GAME,"pl6",player_descr="9-1")
+        pl6=GameInterface(NAME_GAME,NAME_GAME,"pl6",player_descr="9-1")
         print(pl6.interact("join"))
         #print(pl6.chat("join", chat_name=NAME_GAME))
 
-        pl7=Player(NAME_GAME,NAME_GAME,"pl7",player_descr="9-1")
+        pl7=GameInterface(NAME_GAME,NAME_GAME,"pl7",player_descr="9-1")
         print(pl7.interact("join"))
         #print(pl7.chat("join", chat_name=NAME_GAME))
 
-        pl8=Player(NAME_GAME,NAME_GAME,"pl8",player_descr="9-1")
+        pl8=GameInterface(NAME_GAME,NAME_GAME,"pl8",player_descr="9-1")
         print(pl8.interact("join"))
         #print(pl8.chat("join", chat_name=NAME_GAME))
 
-        '''pl9=Player(NAME_GAME,"pl9")
-        print(pl9.interact("join"))
-        #print(pl9.chat("join", chat_name=NAME_GAME))
-        pl10=Player(NAME_GAME,"pl10")
-        print(pl10.interact("join"))
-        #print(pl10.chat("join", chat_name=NAME_GAME))
-        pl11=Player(NAME_GAME,"pl11")
-        print(pl11.interact("join"))
-        #print(pl11.chat("join", chat_name=NAME_GAME))
-        pl12=Player(NAME_GAME,"pl12")
-        print(pl12.interact("join"))
-        #print(pl12.chat("join", chat_name=NAME_GAME))
-        pl13=Player(NAME_GAME,"pl13")
-        print(pl13.interact("join"))
-        #print(pl13.chat("join", chat_name=NAME_GAME))
-        pl14=Player(NAME_GAME,"pl14")
-        print(pl14.interact("join"))
-        #print(pl14.chat("join", chat_name=NAME_GAME))
-        pl15=Player(NAME_GAME,"pl15")
-        print(pl15.interact("join"))
-        #print(pl15.chat("join", chat_name=NAME_GAME))
-        #input("Press Enter to continue...")'''
         # START GAME
        
 
@@ -145,25 +122,5 @@ if __name__ == "__main__":
             threads[n].join()
         name="work"
 
-        '''
-        if(result==True):
-            count = count+1
-            name="work_"
-        else:
-            name="error"'''
-
-        print(pl1.status("status"))
-        '''images = []
-        for file_name in os.listdir(png_dir):
-            if file_name.endswith('.png'):
-                file_path = os.path.join(png_dir, file_name)
-                images.append(imageio.imread(file_path))
-                os.remove(file_path)
-        imageio.mimsave(png_gif_dir+name+NAME_GAME+".gif", images)
-        os.rmdir(png_dir)
-        print("finished")'''
-
     except Exception as e:
         print(e)
-    '''print("Executed correctly: "+str(count)+" on "+str(tot))
-    print("Finito.")'''

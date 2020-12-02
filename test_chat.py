@@ -1,4 +1,4 @@
-from player import Player
+from GameInterface import GameInterface
 from CellularAutomata import CellularAutomata
 from CellularAutomata_chat import CellularAutomata_chat
 import time
@@ -16,8 +16,8 @@ if __name__ == "__main__":
     
     NAME = "ai9_test"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    pl1=Player(NAME,NAME,"ai9_pl17")
-    pl1=Player(NAME,NAME,"ai9_pl1")
+    pl1=GameInterface(NAME,NAME,"ai9_pl17")
+    pl1=GameInterface(NAME,NAME,"ai9_pl1")
     pl1.command_chat("name")
     pl1.command_chat("join")
     

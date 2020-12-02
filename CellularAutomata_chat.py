@@ -24,8 +24,3 @@ class CellularAutomata_chat():
             b"\n").decode("utf-8"))
                     if(self.debug): print(line)
             #print(line)
-                    
-                    
-                    
-    
-                   
