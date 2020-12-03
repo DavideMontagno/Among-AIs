@@ -46,7 +46,23 @@ class VisualComponent():
                 self.player_enemies="upper"
 
         self.player_position = (int(y1+y2), int(x1+x2))
+    
+    def get_allies_name(self, status_result=[]):
+        if(status_result==[]):
+            status_result = self.game_interface.status("status")
 
+        list_allies=[]
+        splitted = status_result.split()
+        my_team=splitted[9]
+        
+        for i in range(15,len(splitted),7):
+            name=splitted[i][5:]
+            team=splitted[i+1]
+            if(team==my_team):
+                list_allies.append(name)
+        
+        return list_allies
+        
     def findStrategy(self):
         pass
 

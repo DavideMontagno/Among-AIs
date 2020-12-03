@@ -9,7 +9,7 @@ import datetime
 from VisualComponent import VisualComponent
 
 class CellularAutomata():
-    def __init__(self, player, debug=False):
+    def __init__(self, player, manager_dict, debug=False):
         self.finished = False
         self.game_interface = player
         self.debug = debug
@@ -34,6 +34,10 @@ class CellularAutomata():
         self.grid_cellular_map = Grid()
         self.consecutive_moves = 1
         self.path = []
+
+        self.manager_dict=manager_dict
+
+        
 
     def update(self):
         self.raw_map,response = self.game_interface.process_map()
@@ -153,8 +157,8 @@ class CellularAutomata():
         return 0
 
     def attack(self):
-        print(self.game_interface.deduction_game(command="accuse",player="pl6"))
-        print(self.game_interface.deduction_game(command="judge",player="pl6",player_nature="AI"))
+        #print(self.game_interface.deduction_game(command="accuse",player="pl6"))
+        #print(self.game_interface.deduction_game(command="judge",player="pl6",player_nature="AI"))
         dict_shoot_direction = {
             "N": np.flip(self.raw_map[:self.player_position[0], self.player_position[1]]),
             "W": np.flip(self.raw_map[self.player_position[0], :self.player_position[1]]),
@@ -197,6 +201,7 @@ class CellularAutomata():
                     self.last_shot = True
 
                     if(self.debug):
+                        self.game_interface.command_chat("post", text_chat="shooting")
                         print("***SHOOT***")
                         if(self.loyality):
                             print("IMPOSTOR-> ", self.game_symbol,
@@ -241,13 +246,28 @@ class CellularAutomata():
             condition = result[index+9+len(str(self.game_interface.game_name))+7]
 
             if(condition.lower() == "a"):
+                ######################################################Prendere lista giocatori con il nome
+                
+                self.manager_dict["allies"]=self.visual.get_allies_name(result)
                 break
-
+        
+        most_pobable_impostor=""
         #### PLAYING MATCH #####
         while(True):
-
-            self.update()
             
+            self.update()
+
+            
+            if("impostors" in self.manager_dict):
+                current_most_pobable_impostor=max(self.manager_dict["impostors"], key=self.manager_dict["impostors"].get)
+
+                if(current_most_pobable_impostor!=most_pobable_impostor):
+                    self.game_interface.deduction_game("accuse", current_most_pobable_impostor)
+                    most_pobable_impostor=current_most_pobable_impostor
+
+                    if(self.debug):
+                        print("Find Impostor: ", most_pobable_impostor)
+                
             if(not(self.attack())):
                 result = self.move()
 
