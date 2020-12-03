@@ -118,7 +118,6 @@ class GameInterface:
         actual = switcher.get(command, "Invalid Command")
 
         self.wait_last_command()
-        print(actual)
         self.connection.write(bytes(actual, "utf-8"))
         
         result = str(self.connection.read_until(

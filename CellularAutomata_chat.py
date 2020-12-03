@@ -23,7 +23,7 @@ class CellularAutomata_chat():
                 self.impostors={k:0 for k in self.allies}
 
             message=text.split()
-            if(message[2] in self.allies):
+            if(message[4] in self.allies and message[2] in self.allies):
                 self.impostors[message[2]]+=1
                 self.manager_dict["impostors"]=self.impostors
 
