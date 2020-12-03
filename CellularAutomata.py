@@ -136,24 +136,23 @@ class CellularAutomata():
                 if(condition.lower() != "a"):# SE IL GIOCO È FINITO #
                     print("Game Finished, no win")
                     return 2
-                else:
-                    if(self.loyality):
-                        check = "PL: symbol="+self.game_symbol+" name="+self.game_interface.player_name+" team=0 x=" + \
-                            str(self.player_position[0])+" y="+str(
-                                self.player_position[1])+" state=ACTIVE"
-                    else:
-                        check = "PL: symbol="+self.game_symbol+" name="+self.game_interface.player_name+" team=1 x=" + \
-                            str(self.player_position[0])+" y="+str(
-                                self.player_position[1])+" state=ACTIVE"
-                    if(self.debug):
-                        print(check)
-                        print(result)
+                # else:
+                #     if(self.loyality):
+                #         check = "PL: symbol="+self.game_symbol+" name="+self.game_interface.player_name+" team=0 x=" + \
+                #             str(self.player_position[0])+" y="+str(
+                #                 self.player_position[1])+" state=ACTIVE"
+                #     else:
+                #         check = "PL: symbol="+self.game_symbol+" name="+self.game_interface.player_name+" team=1 x=" + \
+                #             str(self.player_position[0])+" y="+str(
+                #                 self.player_position[1])+" state=ACTIVE"
+                #     if(self.debug):
+                #         print(check)
+                #         print(result)
 
                     
-                    if(check in result):### se giocatore attivo va ricalcolato il path####
-                        self.path=[]
+                    # if(check in result):### se giocatore attivo va ricalcolato il path####
+                    #     self.path=[]
 
-                    # Da controllare meglio anche questa parte!!!(Non sono sicuro se sia corretto non ricalare il path perché qui non controlla se il giocatore non é attivo
                     # else:### se giocatore non attivo####
                     #     if(self.debug):
                     #         print("Player killed")
@@ -256,6 +255,7 @@ class CellularAutomata():
                 self.manager_dict["allies"]=self.visual.get_allies_name(result)
                 break
         
+        start_time = time.time()
         most_pobable_impostor=""
         #### PLAYING MATCH #####
         while(True):
@@ -272,11 +272,19 @@ class CellularAutomata():
 
                     if(self.debug):
                         print("Find Impostor: ", most_pobable_impostor)
+
+            while((time.time() - start_time) < 45.0):
+                # TODO 
+                # A strategy to play the game in this 45 seconds
+                print("I can't win now so I sleep for a while")
+                print("I wake up in %.d seconds" %(45 - (time.time() - start_time)))
+                time.sleep(5)
                 
             if(not(self.attack())):
                 result = self.move()
 
                 if(result == 1):
+                    print("--- %.2f seconds ---" % (time.time() - start_time))
                     print(
                         "|||||||||||||||||||||||||||WIN|||||||||||||||||||||||||||||||||")
                     stat = self.game_interface.status("status")
@@ -287,6 +295,7 @@ class CellularAutomata():
                     self.game_interface.finished = True
                     return True
                 if(result == 2):
+                    print("--- %.2f seconds ---" % (time.time() - start_time))
                     print(
                         "|||||||||||||||||||||||||||ERROR|||||||||||||||||||||||||||||||")
                     leave = self.game_interface.command_chat("leave")
