@@ -67,9 +67,9 @@ class GameInterface:
         
         return result
 
-    def manage_game(self, command):
+    def manage_game(self, command, flags='Q1'):
 
-        switcher = {"new": "NEW "+self.game_name+" Q1\n",
+        switcher = {"new": "NEW "+self.game_name+" "+flags+"\n",
                     "start": self.game_name+" START\n"}
 
         actual = switcher.get(command, "Invalid Command")

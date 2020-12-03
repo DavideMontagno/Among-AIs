@@ -11,6 +11,7 @@ import multiprocessing
 count=0
 png_gif_dir = "./gif/"
 tot=1
+debug = True
 
 
 def start_game(cellular_a):
@@ -20,7 +21,6 @@ def start_chat(cellular_chat):
     pass
 
 if __name__ == "__main__":
-    
     
     #CREATION
     NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
