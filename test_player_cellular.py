@@ -27,8 +27,8 @@ if __name__ == "__main__":
     print(NAME_GAME)
     png_dir = str(NAME_GAME)
 
-    pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="v0.1")
-    print(pl1.manage_game("new","Q1B"))
+    pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="v0.1", flags="Q1")
+    print(pl1.manage_game("new"))
     #JOIN GAME
     print(pl1.interact("join"))
     pl1.command_chat("name")

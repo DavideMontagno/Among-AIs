@@ -3,10 +3,10 @@ import time
 import numpy as np
 import re
 
-time_sleep = 0.50
+default_time_sleep=0.5
 
 class GameInterface:
-    def __init__(self,  game_name, chat_name, player_name, player_nature="AI", player_descr="", host="margot.di.unipi.it", port=8421, chat_port=8422):
+    def __init__(self,  game_name, chat_name, player_name, player_nature="AI", player_descr="", flags="Q1",host="margot.di.unipi.it", port=8421, chat_port=8422):
         self.host = host
         self.port = port
         self.chat_port = chat_port
@@ -22,10 +22,18 @@ class GameInterface:
         self.chat = telnetlib.Telnet(self.host, self.chat_port)
         self.last_status = ""
         self.timestamp_last_command = time.clock()
+        self.time_sleep=default_time_sleep
+        self.flags=flags
+        if("T" in self.flags):
+            self.time_sleep=0.05
 
-    def wait_last_command(self):
-        while(time.clock()-self.timestamp_last_command <= time_sleep):
-            pass
+    def wait_last_command(self,status="game"):
+        if(status=="lobby"):
+            while(time.clock()-self.timestamp_last_command <= default_time_sleep):
+                pass
+        else:
+            while(time.clock()-self.timestamp_last_command <= self.time_sleep):
+                pass
 
     def interact(self, command, direction="", text=""):
 
@@ -38,8 +46,14 @@ class GameInterface:
                     }
 
         actual = switcher.get(command, "Invalid Command")
-        if(command != "nop"):
+        if(command=="join"):
+            self.wait_last_command(status="lobby")
+        else:
             self.wait_last_command()
+        # è da aggiungere??    
+        #if(command != "nop"):
+        #    self.wait_last_command()
+        
         
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
@@ -65,14 +79,14 @@ class GameInterface:
         
         return result
 
-    def manage_game(self, command, flags='Q1'):
+    def manage_game(self, command):
 
-        switcher = {"new": "NEW "+self.game_name+" "+flags+"\n",
+        switcher = {"new": "NEW "+self.game_name+" "+self.flags+"\n",
                     "start": self.game_name+" START\n"}
 
         actual = switcher.get(command, "Invalid Command")
 
-        self.wait_last_command()
+        self.wait_last_command(status="lobby")
 
         self.connection.write(bytes(actual, "utf-8"))
 
