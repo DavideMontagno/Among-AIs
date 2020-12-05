@@ -5,8 +5,6 @@ import re
 
 time_sleep = 0.50
 
-time_response = 0.2
-
 class GameInterface:
     def __init__(self,  game_name, chat_name, player_name, player_nature="AI", player_descr="", host="margot.di.unipi.it", port=8421, chat_port=8422):
         self.host = host
@@ -45,7 +43,7 @@ class GameInterface:
         
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
-            b"\n", time_response).decode("utf-8"))
+            b"\n").decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
         return actual+" "+result
@@ -60,7 +58,7 @@ class GameInterface:
     
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
-            b"\xc2\xbb\n", time_response).decode("utf-8"))
+            b"\xc2\xbb\n").decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
 
@@ -79,7 +77,7 @@ class GameInterface:
         self.connection.write(bytes(actual, "utf-8"))
 
         result = str(self.connection.read_until(
-            b"\n", time_response).decode("utf-8"))
+            b"\n").decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
 
@@ -121,7 +119,7 @@ class GameInterface:
         self.connection.write(bytes(actual, "utf-8"))
         
         result = str(self.connection.read_until(
-            b"\n", time_response).decode("utf-8"))
+            b"\n").decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
         return result
