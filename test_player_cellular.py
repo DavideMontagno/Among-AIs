@@ -79,8 +79,8 @@ if __name__ == "__main__":
     manager = multiprocessing.Manager()
     manager_dict = manager.dict()
 
-    ca = CellularAutomata(pl1, manager_dict,debug=debug) # to Debug
-    ca_chat = CellularAutomata_chat(pl1, manager_dict,debug=True)
+    ca = CellularAutomata(pl1, manager_dict,debug=True) # to Debug
+    ca_chat = CellularAutomata_chat(pl1, manager_dict,debug=False)
     #result = ca.play()
     
     t1 = multiprocessing.Process(target=start_game, args=(ca,))
