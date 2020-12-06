@@ -7,10 +7,10 @@ from pathfinding.core.grid import Grid, Node
 from pathfinding.finder.a_star import AStarFinder
 import datetime
 from VisualComponent import VisualComponent
-
+import random
 
 class CellularAutomata():
-    def __init__(self, player, manager_dict, debug=False, consecutive_moves_no_shot=1, mode="kamikaze"):
+    def __init__(self, player, manager_dict, debug=False, consecutive_moves_no_shot=1, risk_007=0.1,mode="kamikaze"):
         ################MODE
         #KAMIKAZE
             #Trova il path minimo e va dritto alla bandiera, 
@@ -19,6 +19,7 @@ class CellularAutomata():
             #Trova il path minimo controllando anche la posizione degli avversari
             #preferisce cammini più sicuri per raggiungere la bandiera
             #cambia sempre il path a seconda degli avversari
+            #Ha una percentuale di rischio impostabile
             #TODO: gestire il caso di 007 come impostore
         ################
         self.finished = False
@@ -26,9 +27,10 @@ class CellularAutomata():
         self.already_shoot = []
         self.last_shot = False
         self.grid_cellular_map = Grid()
-        self.consecutive_moves_no_shot = 1
+        self.consecutive_moves_no_shot = consecutive_moves_no_shot
         self.path = []
         self.mode = mode
+        self.risk_007=risk_007
 
         self.manager_dict = manager_dict
 
@@ -85,28 +87,29 @@ class CellularAutomata():
                     x=row, y=column, walkable=walkable, weight=result)
 
         if(self.mode == "007"):
+            if(random.uniform(0, 1)>=self.risk_007):
 
-            next_move={}
+                next_move={}
 
-            if(self.player_position[0]+1<=len(self.raw_map)):
-                next_move["S"]=(self.player_position[0]+1,self.player_position[1])
-            if(self.player_position[0]-1>=0):
-                next_move["N"]=(self.player_position[0]-1,self.player_position[1])
-            if(self.player_position[1]-1<=0):
-                next_move["O"]=(self.player_position[0],self.player_position[1]-1)
-            if(self.player_position[1]+1<=len(self.raw_map)):
-                next_move["E"]=(self.player_position[0],self.player_position[1]+1)
+                if(self.player_position[0]+1<=len(self.raw_map)):
+                    next_move["S"]=(self.player_position[0]+1,self.player_position[1])
+                if(self.player_position[0]-1>=0):
+                    next_move["N"]=(self.player_position[0]-1,self.player_position[1])
+                if(self.player_position[1]-1<=0):
+                    next_move["O"]=(self.player_position[0],self.player_position[1]-1)
+                if(self.player_position[1]+1<=len(self.raw_map)):
+                    next_move["E"]=(self.player_position[0],self.player_position[1]+1)
 
-            for key in next_move:
-                old_node = self.grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]]
-                for enemy_position in list_enemies_position:
-                    if(enemy_position[1]==next_move[key][1]):# Se la colonna è la stessa
-                        self.grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
-                        x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
+                for key in next_move:
+                    old_node = self.grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]]
+                    for enemy_position in list_enemies_position:
+                        if(enemy_position[1]==next_move[key][1]):# Se la colonna è la stessa
+                            self.grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
+                            x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
 
-                    if(enemy_position[0]==next_move[key][0]):# Se la riga è la stessa
-                        self.grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
-                        x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
+                        if(enemy_position[0]==next_move[key][0]):# Se la riga è la stessa
+                            self.grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
+                            x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
 
 
     def move(self):
