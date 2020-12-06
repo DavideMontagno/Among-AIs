@@ -27,8 +27,8 @@ if __name__ == "__main__":
     print(NAME_GAME)
     png_dir = str(NAME_GAME)
 
-    pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="v0.1")
-    print(pl1.manage_game("new","Q1B"))
+    pl1=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl1",player_descr="v0.1", flags="Q1")
+    print(pl1.manage_game("new"))
     #JOIN GAME
     print(pl1.interact("join"))
     pl1.command_chat("name")
@@ -79,8 +79,8 @@ if __name__ == "__main__":
     manager = multiprocessing.Manager()
     manager_dict = manager.dict()
 
-    ca = CellularAutomata(pl1, manager_dict,debug=debug) # to Debug
-    ca_chat = CellularAutomata_chat(pl1, manager_dict,debug=True)
+    ca = CellularAutomata(pl1, manager_dict,debug=True) # to Debug
+    ca_chat = CellularAutomata_chat(pl1, manager_dict,debug=False)
     #result = ca.play()
     
     t1 = multiprocessing.Process(target=start_game, args=(ca,))

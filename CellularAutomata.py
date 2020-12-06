@@ -136,6 +136,8 @@ class CellularAutomata():
                 if(condition.lower() != "a"):# SE IL GIOCO È FINITO #
                     print("Game Finished, no win")
                     return 2
+                else:
+                    self.path = []
                 # else:
                 #     if(self.loyality):
                 #         check = "PL: symbol="+self.game_symbol+" name="+self.game_interface.player_name+" team=0 x=" + \
