@@ -38,11 +38,13 @@ class CellularAutomata_chat():
             self.process_message(result)
 
             if(self.debug): print(result)
-            if(result.lower().find("finished!")!=-1): break
-                
+            if(result.lower().find("finished!")!=-1): 
+                break
+        '''
         while(True):
                     line = str(self.player.chat.read_until(
             b"\n").decode("utf-8"))
                     chat.append(line)
                     if(self.debug): print(line)
             #print(line)
+        '''

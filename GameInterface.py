@@ -56,7 +56,9 @@ class GameInterface:
         
         
         self.connection.write(bytes(actual, "utf-8"))
-        result = str(self.connection.read_until(
+        result=""
+        if(command!="leave"):
+            result = str(self.connection.read_until(
             b"\n").decode("utf-8"))
 
         self.timestamp_last_command = time.clock()

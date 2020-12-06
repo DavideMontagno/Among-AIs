@@ -16,12 +16,10 @@ debug = False
 
 
 def start_game(cellular_a):
-
     cellular_a.play()
-def start_chat(cellular_chat):
 
+def start_chat(cellular_chat):
     cellular_chat.read_chat()
-    pass
 
 if __name__ == "__main__":
 
@@ -85,8 +83,8 @@ if __name__ == "__main__":
     for i in range(n_players):
         t = multiprocessing.Process(target=start_game, args=(ca_list[i],))
         c = multiprocessing.Process(target=start_chat, args=(ca_chat_list[i],))
-        threads.append(t)
         threads.append(c)
+        threads.append(t)
     #_______________________________________________________________________________
 
     for n in range(len(threads)):
@@ -98,10 +96,4 @@ if __name__ == "__main__":
     else: print("Started")
 
     for n in range(len(threads)):
-        if(n%2==0):
-            threads[n].join()
-
-    for n in range(len(threads)):
-        if(n%2==1):
-            threads[n].terminate()
-
+        threads[n].join()
