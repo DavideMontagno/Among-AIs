@@ -1,6 +1,5 @@
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
-from pathfinding.finder.a_star import AStarFinder
 import numpy as np
 
 class VisualComponent():
@@ -84,3 +83,35 @@ class VisualComponent():
     def get_enemies(self):
         return self.player_enemies
 
+    def getGridFromMap(self):
+        self.raw_map,response = self.player.process_map()
+        grid_cellular_map = Grid()
+        '''if(self.debug):
+            print(response)'''
+
+        grid_cellular_map = Grid(
+            width=len(self.raw_map), height=len(self.raw_map[0])) # perché qui si controlla la prima posizionie nella HEIGHT(e mi trovo), ma non nella width???
+
+        for row in range(len(self.raw_map)):
+            for column in range(len(self.raw_map[0])):
+
+                current_cell = self.raw_map[row][column]
+                walkable = True
+                if(current_cell == "#" or current_cell == "@" or current_cell == "!" or current_cell == "&"):
+                    result = -1
+                    walkable = False
+                elif(current_cell == "$"):
+                    # distance.cityblock(self.flag,[row,column]).astype(int) -1
+                    result = 4
+                    walkable = True
+                elif(current_cell == self.getFlag() or current_cell == self.getFlag().swapcase()):
+                    result = 1
+                    walkable = True
+                else:
+                    # distance.cityblock(self.flag,[row,column]).astype(int)
+                    result = 5
+                    walkable = True
+
+                grid_cellular_map.nodes[column][row] = Node(
+                    x=row, y=column, walkable=walkable, weight=result)
+        return grid_cellular_map
