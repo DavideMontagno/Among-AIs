@@ -15,8 +15,8 @@ tot=1
 debug = False
 
 
-def start_game(cellular_a):
-    res=cellular_a.play()
+def start_game(cellular_a,starting=False):
+    res=cellular_a.play(starting)
     return res
 
 def start_chat(cellular_chat):
@@ -25,49 +25,29 @@ def start_chat(cellular_chat):
 
 if __name__ == "__main__":
 
-    
+    #PARAMETRI
+    NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     n_players=5
     flags="Q1B"
     
-    #CREATION
-    NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     print(NAME_GAME)
-    png_dir = str(NAME_GAME)
 
-    pl0=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl0",player_descr="v0.1",flags=flags)
-    print(pl0.manage_game("new"))
+    #INIZIALIZZAZIONE THREAD COMMUNICATION
+    manager = multiprocessing.Manager()
 
-    #JOIN GAME
-    print(pl0.interact("join"))
-    pl0.command_chat("name")
-    pl0.command_chat("join")
 
-    #OTHER_PLAYER___________________________________________________________________
-    other_pl_list=[]
+    #OTHER_PLAYER_GAME_INTERFACE___________________________________________________________________
+
+    threads=[]
     for i in range(n_players):
         pl=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl"+str(i+1),player_descr="v0.1",flags=flags)
+
+        if(i==0):#Creatore del gioco
+            pl.manage_game("new")
+
         print(pl.interact("join"))
         pl.command_chat("name")
         pl.command_chat("join")
-        other_pl_list.append(pl)
-    #_______________________________________________________________________________
-
-
-    manager = multiprocessing.Manager()
-
-    manager_dict = manager.dict()
-    ca0 = CellularAutomata(pl0, manager_dict,debug=False,mode="007") # to Debug
-    ca_chat0 = CellularAutomata_chat(pl0, manager_dict,debug=True)
-
-    t0 = multiprocessing.Process(target=start_game, args=(ca0,))
-    c0 = multiprocessing.Process(target=start_chat, args=(ca_chat0,))
-
-    threads=[t0,c0]
-
-    #OTHER_PLAYER___________________________________________________________________
-    ca_list=[]
-    ca_chat_list=[]
-    for i, pl in enumerate(other_pl_list):
 
         manager_dict = manager.dict()
 
@@ -78,23 +58,16 @@ if __name__ == "__main__":
         
         ca_chat = CellularAutomata_chat(pl, manager_dict,debug=False)
 
-        ca_list.append(ca)
-        ca_chat_list.append(ca_chat)
-
-    for i in range(n_players):
-        t = multiprocessing.Process(target=start_game, args=(ca_list[i],))
-        c = multiprocessing.Process(target=start_chat, args=(ca_chat_list[i],))
+        if(i==0):# Creatore del gioco
+            t = multiprocessing.Process(target=start_game, args=(ca,True))
+        else:  
+            t = multiprocessing.Process(target=start_game, args=(ca,))
+        c = multiprocessing.Process(target=start_chat, args=(ca_chat,))
         threads.append(c)
         threads.append(t)
     #_______________________________________________________________________________
 
-    
-    input("Press enter to start")
-    if(pl0.manage_game("start").lower().find("error")!=-1):
-        print("ERRORE CREAZIONE")
-        exit()
-    else: print("Started")
-    time.sleep(0.5)
+
 
     for n in range(0, len(threads)):
         threads[n].start()

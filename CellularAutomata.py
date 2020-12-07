@@ -326,8 +326,19 @@ class CellularAutomata():
                     self.game_interface.deduction_game("judge", ai,"AI")
                 break
 
-    def play(self):
+    def play(self, starting=False):
+
         print(self.game_interface.player_name+" is in!!!")
+
+        ######CREATION#######################################################
+        if(starting==True):
+            print("CREATION, wait 20 seconds")
+            time.sleep(20)
+            if(self.game_interface.manage_game("start").lower().find("error")!=-1):
+                print("ERRORE CREAZIONE")
+                exit()
+            else: print("Started")
+
         ##### LOBBY #######################################################################
 
         self.wait_lobby()
@@ -361,7 +372,7 @@ class CellularAutomata():
                 self.move()
         
 
-        #### PLAYING MATCH #####
+        ####PLAYING_MATCH###################
         print("MATCH")
         self.cooldown=False
         while(True):
