@@ -14,57 +14,58 @@ class Strategies():
         self.debug = debug
         self.visual = visual
 
-    def getStrategy(self,position,cooldown=False):
+    def getStrategy(self, position, cooldown=False):
         
         ### Taking new map 
-        grid_cellular_map = self.visual.getGridFromMap()
-        #grid_cellular_map_opposite = self.visual.getGridFromMap()
-        #### Defining A-Star
-        finder = AStarFinder(
-                diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
+        grid_cellular_map, raw_map = self.visual.getGridFromMap()
 
-        if(position!=[]): actual_position = position
         
         ## Taking position for A*
-        flag = np.where(self.visual.raw_map == self.visual.getFlag())
-        flag_opposite = np.where(self.visual.raw_map == self.visual.getFlag().swapcase())
-        
-        
+        flag = np.where(raw_map == self.visual.getFlag())
+        flag_opposite = np.where(raw_map == self.visual.getFlag().swapcase())
 
         ## Create nodes for A*
         start = grid_cellular_map.node(
-                actual_position[0], actual_position[1])
-        end_own = grid_cellular_map.node(flag[0][0],flag[1][0])
-        end_opposite = grid_cellular_map_opposite.node(flag_opposite[0][0],flag_opposite[1][0]) ## Flag my team!
-        start_opposite = grid_cellular_map_opposite.node(
-                actual_position[0], actual_position[1])
+                position[0], position[1])
 
+        end_own = grid_cellular_map.node(flag[0][0],flag[1][0])
+        end_opposite = grid_cellular_map.node(flag_opposite[0][0],flag_opposite[1][0])
 
         if(self.visual.getLoyality()==True): ##Impostore
             if(self.debug): print("I'm an impostor so i'm rushing to opposite team flag")
-            
+
             grid_cellular_map.cleanup()
+            finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
             path, _ = finder.find_path(start, end_opposite, grid_cellular_map) #Path per la bandiera da catturare
-            return path ## Go to capture the flag
+
+            return path, raw_map ## Go to capture the flag
         else: ## PlayerNormale
             if(cooldown):
+
                 grid_cellular_map.cleanup()
+                finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
+                path_opposite, _ = finder.find_path(start, end_opposite, grid_cellular_map) #Path per la propria bandiera
+                
+                grid_cellular_map.cleanup()
+                finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
                 path, _ = finder.find_path(start, end_own, grid_cellular_map) ## Path per la bandiera da catturare
-                grid_cellular_map.cleanup()
-                path_opposite, _ = finder.find_path(start_opposite, end_opposite, grid_cellular_map) #Path per la propria bandiera
+
                 if(self.debug):
                     print("Distance from correct flag: "+str(len(path)))
                     print("Distance from opposite flag: "+str(len(path_opposite)))
                 if(len(path)>len(path_opposite)): ### Stay in own base
                     if(self.debug): print("I'm going to my own base")
-                    return path_opposite
+                    return path_opposite, raw_map
                 else: # Go to capture the flag
                     if(self.debug): print("I'm capturing the flag")
-                    return path
+                    return path, raw_map
             else:
                if(self.debug): print("I'm capturing the flag")
+
+               grid_cellular_map.cleanup()
+               finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
                path, _ = finder.find_path(start, end_own, grid_cellular_map) ## Path per la bandiera da catturare
-               return path 
+               return path, raw_map
             
 
 

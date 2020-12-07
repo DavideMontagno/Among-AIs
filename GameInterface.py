@@ -3,7 +3,8 @@ import time
 import numpy as np
 import re
 
-default_time_sleep=0.5
+default_time_sleep=0.50
+command_time_sleep=0.30
 
 class GameInterface:
     def __init__(self,  game_name, chat_name, player_name, player_nature="AI", player_descr="", flags="Q1",host="margot.di.unipi.it", port=8421, chat_port=8422):
@@ -20,19 +21,21 @@ class GameInterface:
         self.player_position = (0, 0)
         self.connection = telnetlib.Telnet(self.host, self.port)
         self.chat = telnetlib.Telnet(self.host, self.chat_port)
-        self.last_status = ""
+
         self.timestamp_last_command = time.clock()
-        self.time_sleep=default_time_sleep
+
+        self.command_time_sleep=command_time_sleep
+        self.default_time_sleep=default_time_sleep
         self.flags=flags
         if("T" in self.flags):
-            self.time_sleep=0.05
+            self.command_time_sleep=0.05
 
-    def wait_last_command(self,status="game"):
-        if(status=="lobby"):
-            while(time.clock()-self.timestamp_last_command <= default_time_sleep):
+    def wait_last_command(self, time_mode="default"):
+        if(time_mode=="default"):
+            while(time.clock()-self.timestamp_last_command <= self.default_time_sleep):
                 pass
         else:
-            while(time.clock()-self.timestamp_last_command <= self.time_sleep):
+            while(time.clock()-self.timestamp_last_command <= self.command_time_sleep):
                 pass
 
     def interact(self, command, direction="", text=""):
@@ -46,14 +49,11 @@ class GameInterface:
                     }
 
         actual = switcher.get(command, "Invalid Command")
+
         if(command=="join"):
-            self.wait_last_command(status="lobby")
+            self.wait_last_command(time_mode="default")
         else:
-            self.wait_last_command()
-        # è da aggiungere??    
-        #if(command != "nop"):
-        #    self.wait_last_command()
-        
+            self.wait_last_command(time_mode="game")
         
         self.connection.write(bytes(actual, "utf-8"))
         result=""
@@ -70,14 +70,13 @@ class GameInterface:
 
         actual = switcher.get(command, "Invalid Command")
 
-        self.wait_last_command()
+        self.wait_last_command(time_mode="default")
     
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
             b"\xc2\xbb\n").decode("utf-8"))
 
         self.timestamp_last_command = time.clock()
-
         
         return result
 
@@ -88,12 +87,13 @@ class GameInterface:
 
         actual = switcher.get(command, "Invalid Command")
 
-        self.wait_last_command(status="lobby")
+        self.wait_last_command(time_mode="default")
 
         self.connection.write(bytes(actual, "utf-8"))
 
         result = str(self.connection.read_until(
             b"\n").decode("utf-8"))
+        print(result)
 
         self.timestamp_last_command = time.clock()
 
@@ -131,7 +131,7 @@ class GameInterface:
                     }
         actual = switcher.get(command, "Invalid Command")
 
-        self.wait_last_command()
+        self.wait_last_command(time_mode="default")
         self.connection.write(bytes(actual, "utf-8"))
         
         result = str(self.connection.read_until(

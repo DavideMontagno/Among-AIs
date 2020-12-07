@@ -1,6 +1,6 @@
 from GameInterface import GameInterface
 from CellularAutomata import CellularAutomata
-from CellularAutomataSUPER import CellularAutomata
+from CellularAutomata import CellularAutomata
 from CellularAutomata_chat import CellularAutomata_chat
 import time
 import datetime
@@ -16,16 +16,18 @@ debug = False
 
 
 def start_game(cellular_a):
-    cellular_a.play()
+    res=cellular_a.play()
+    return res
 
 def start_chat(cellular_chat):
-    cellular_chat.read_chat()
+    res=cellular_chat.read_chat()
+    return res
 
 if __name__ == "__main__":
 
     
     n_players=5
-    flags="TQ1B"
+    flags="Q1B"
     
     #CREATION
     NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -55,7 +57,7 @@ if __name__ == "__main__":
 
     manager_dict = manager.dict()
     ca0 = CellularAutomata(pl0, manager_dict,debug=False,mode="007") # to Debug
-    ca_chat0 = CellularAutomata_chat(pl0, manager_dict,debug=False)
+    ca_chat0 = CellularAutomata_chat(pl0, manager_dict,debug=True)
 
     t0 = multiprocessing.Process(target=start_game, args=(ca0,))
     c0 = multiprocessing.Process(target=start_chat, args=(ca_chat0,))
@@ -79,7 +81,6 @@ if __name__ == "__main__":
         ca_list.append(ca)
         ca_chat_list.append(ca_chat)
 
-
     for i in range(n_players):
         t = multiprocessing.Process(target=start_game, args=(ca_list[i],))
         c = multiprocessing.Process(target=start_chat, args=(ca_chat_list[i],))
@@ -87,13 +88,16 @@ if __name__ == "__main__":
         threads.append(t)
     #_______________________________________________________________________________
 
-    for n in range(len(threads)):
-        threads[n].start()
-
+    
+    input("Press enter to start")
     if(pl0.manage_game("start").lower().find("error")!=-1):
         print("ERRORE CREAZIONE")
         exit()
     else: print("Started")
+    time.sleep(0.5)
+
+    for n in range(0, len(threads)):
+        threads[n].start()
 
     for n in range(len(threads)):
         threads[n].join()

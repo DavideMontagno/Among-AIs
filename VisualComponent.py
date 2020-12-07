@@ -1,10 +1,12 @@
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
 import numpy as np
+import random
 
 class VisualComponent():
-    def __init__(self, player):
+    def __init__(self, cellular_automata,player):
         self.player = player
+        self.cellular_automata=cellular_automata
         self.raw_map = self.player.process_map()
         self.is_impostor = False
         self.set_information()
@@ -14,9 +16,12 @@ class VisualComponent():
         result = self.player.status("status")
         index = result.find("ME: symbol=")
         self.game_symbol = result[index+11]
+
         # Get impostor
-        index = result.find("loyalty=")
-        if(result[index+8] == "0"):
+        index_l = result.find("loyalty=")
+        index_t = result.find("team=")
+
+        if(result[index_l+8] != result[index_t+5]):
             self.is_impostor = True
 
         # Get position
@@ -52,16 +57,39 @@ class VisualComponent():
 
         list_allies=[]
         splitted = status_result.split()
-        my_team=splitted[9]
-        
-        for i in range(15,len(splitted),7):
+        my_team=splitted[10]
+
+        for i in range(16,len(splitted),7):
             name=splitted[i][5:]
             team=splitted[i+1]
             if(team==my_team):
                 list_allies.append(name)
-        
+ 
         return list_allies
-        
+    def change_behaviour(self, ai_list):
+         #TODO define a strategy to remove the humans
+        humans = []
+        for player in ai_list:
+            if(player == self.player.player_name):
+                continue
+            choise = random.randint(0,1)
+            if(choise == 0):
+                humans.append(player)
+                # ai_list.remove(player)
+
+    def get_all_names(self, status_result=[]):
+          if(status_result==[]):
+              status_result = self.player.status("status")
+ 
+          possible_ai = []
+          splitted = status_result.split()
+ 
+          for i in range(15, len(splitted), 7):
+              ais = splitted[i+1][5:]
+              possible_ai.append(ais)
+ 
+          return possible_ai
+
     def findStrategy(self):
         pass
 
@@ -86,12 +114,12 @@ class VisualComponent():
     def getGridFromMap(self):
         self.raw_map,response = self.player.process_map()
         grid_cellular_map = Grid()
-        '''if(self.debug):
-            print(response)'''
+
 
         grid_cellular_map = Grid(
             width=len(self.raw_map), height=len(self.raw_map[0])) # perché qui si controlla la prima posizionie nella HEIGHT(e mi trovo), ma non nella width???
 
+        list_enemies_position=[]
         for row in range(len(self.raw_map)):
             for column in range(len(self.raw_map[0])):
 
@@ -101,17 +129,46 @@ class VisualComponent():
                     result = -1
                     walkable = False
                 elif(current_cell == "$"):
-                    # distance.cityblock(self.flag,[row,column]).astype(int) -1
-                    result = 4
+                    result = 2
                     walkable = True
-                elif(current_cell == self.getFlag() or current_cell == self.getFlag().swapcase()):
-                    result = 1
+                elif(current_cell == self.getFlag().swapcase()):
+                    result = 5
                     walkable = True
+                elif(self.cellular_automata.is_enemy(current_cell)):
+                    result = 5
+                    walkable = True
+                    if(self.game_symbol!=current_cell and self.game_symbol!=self.getFlag()):
+                        list_enemies_position.append((row, column))
                 else:
-                    # distance.cityblock(self.flag,[row,column]).astype(int)
                     result = 5
                     walkable = True
 
                 grid_cellular_map.nodes[column][row] = Node(
                     x=row, y=column, walkable=walkable, weight=result)
-        return grid_cellular_map
+
+        if(self.cellular_automata.mode == "007"):
+            if(random.uniform(0, 1)>=self.cellular_automata.risk_007):
+
+                next_move={}
+
+                if(self.cellular_automata.player_position[0]+1<=len(self.raw_map)):
+                    next_move["S"]=(self.cellular_automata.player_position[0]+1,self.cellular_automata.player_position[1])
+                if(self.cellular_automata.player_position[0]-1>=0):
+                    next_move["N"]=(self.cellular_automata.player_position[0]-1,self.cellular_automata.player_position[1])
+                if(self.cellular_automata.player_position[1]-1<=0):
+                    next_move["O"]=(self.cellular_automata.player_position[0],self.cellular_automata.player_position[1]-1)
+                if(self.cellular_automata.player_position[1]+1<=len(self.raw_map)):
+                    next_move["E"]=(self.cellular_automata.player_position[0],self.cellular_automata.player_position[1]+1)
+
+                for key in next_move:
+                    old_node = grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]]
+                    for enemy_position in list_enemies_position:
+                        if(enemy_position[1]==next_move[key][1]):# Se la colonna è la stessa
+                            grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
+                            x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
+
+                        if(enemy_position[0]==next_move[key][0]):# Se la riga è la stessa
+                            grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
+                            x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
+
+        return grid_cellular_map, self.raw_map
