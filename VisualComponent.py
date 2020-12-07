@@ -1,6 +1,7 @@
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
 import numpy as np
+import random
 
 class VisualComponent():
     def __init__(self, player):
@@ -8,6 +9,19 @@ class VisualComponent():
         self.raw_map = self.player.process_map()
         self.is_impostor = False
         self.set_information()
+
+    def change_behaviour(self, ai_list):
+        #TODO define a strategy to remove the humans
+        humans = []
+        for player in ai_list:
+            if(player == self.player.player_name):
+                continue
+            choise = random.randint(0,1)
+            if(choise == 0):
+                humans.append(player)
+                # ai_list.remove(player)
+            
+        return humans
 
     def set_information(self):
         # Get game symbol
@@ -48,7 +62,7 @@ class VisualComponent():
     
     def get_allies_name(self, status_result=[]):
         if(status_result==[]):
-            status_result = self.game_interface.status("status")
+            status_result = self.player.status("status")
 
         list_allies=[]
         splitted = status_result.split()
@@ -61,9 +75,20 @@ class VisualComponent():
                 list_allies.append(name)
         
         return list_allies
+
+    def get_all_names(self, status_result=[]):
+        if(status_result==[]):
+            status_result = self.player.status("status")
+
+        possible_ai = []
+        splitted = status_result.split()
         
-    def findStrategy(self):
-        pass
+        for i in range(15, len(splitted), 7):
+            ais = splitted[i+1][5:]
+            print(ais)
+            possible_ai.append(ais)
+
+        return possible_ai
 
     def getFlag(self):
         if(self.game_symbol.islower()):
