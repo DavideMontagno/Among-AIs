@@ -343,11 +343,16 @@ class CellularAutomata():
 
         self.wait_lobby()
         
-        
         ####MATCH############################################################################
         start_time = time.time()
         most_probable_impostor = ""
         
+        #####TIME ESTIMATE ######################################
+        self.cooldown=False
+        self.path, self.raw_map = self.strategy.getStrategy(cooldown=self.cooldown,position=self.player_position)
+        estimate_time=len(self.path)*(self.game_interface.command_time_sleep+self.game_interface.default_time_sleep)
+        self.cooldown=True
+
         #####COOLDOWN##############################
         print("COOLDOWN")
         self.cooldown=True
@@ -359,8 +364,9 @@ class CellularAutomata():
                 print("No path")
                 print(res)
             return 2
-        
-        while("cooldown_catch_end" not in self.manager_dict):
+
+        while(start_time+30-estimate_time>=time.time()):
+        #while("cooldown_catch_end" not in self.manager_dict):
             most_probable_impostor=self.check_impostors(most_probable_impostor)
 
             self.path, self.raw_map = self.strategy.getStrategy(cooldown=self.cooldown,position=self.player_position)

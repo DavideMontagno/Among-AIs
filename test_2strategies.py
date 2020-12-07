@@ -28,7 +28,7 @@ if __name__ == "__main__":
     #PARAMETRI
     NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     n_players=5
-    flags="Q1B"
+    flags="TQ1B"
     
     print(NAME_GAME)
 
