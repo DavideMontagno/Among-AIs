@@ -35,8 +35,8 @@ class Strategies():
         start = grid_cellular_map.node(
                 actual_position[0], actual_position[1])
         end_own = grid_cellular_map.node(flag[0][0],flag[1][0])
-        end_opposite = grid_cellular_map_opposite.node(flag_opposite[0][0],flag_opposite[1][0]) ## Flag my team!
-        start_opposite = grid_cellular_map_opposite.node(
+        end_opposite = grid_cellular_map.node(flag_opposite[0][0],flag_opposite[1][0]) ## Flag my team!
+        start_opposite = grid_cellular_map.node(
                 actual_position[0], actual_position[1])
 
 

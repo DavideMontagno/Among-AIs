@@ -35,6 +35,7 @@ class CellularAutomata():
         self.path = []
         self.strategy = strategy = Strategies(visual=self.visual,debug=self.debug)
         self.manager_dict=manager_dict
+        self.ai_list = []
 
         
 
@@ -259,6 +260,13 @@ class CellularAutomata():
             index = result.find("GA: name="+self.game_interface.game_name+" "+"state=")
             condition = result[index+9+len(str(self.game_interface.game_name))+7]
 
+            self.ai_list = self.visual.get_all_names(result)
+            for ai in self.ai_list:
+                print(self.game_interface.deduction_game("judge", ai,"AI"))
+            humans = self.visual.change_behaviour(self.ai_list)
+            for p in humans:
+                print(self.game_interface.deduction_game("judge", p, "H"))
+
             if(condition.lower() == "a"):
                 ######################################################Prendere lista giocatori con il nome
                 
@@ -271,7 +279,6 @@ class CellularAutomata():
         while(True):
             
             self.update()
-
             
             if("impostors" in self.manager_dict):
                 current_most_pobable_impostor=max(self.manager_dict["impostors"], key=self.manager_dict["impostors"].get)
