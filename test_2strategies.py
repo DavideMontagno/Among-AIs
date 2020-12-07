@@ -35,9 +35,7 @@ if __name__ == "__main__":
     #INIZIALIZZAZIONE THREAD COMMUNICATION
     manager = multiprocessing.Manager()
 
-
     #OTHER_PLAYER_GAME_INTERFACE___________________________________________________________________
-
     threads=[]
     for i in range(n_players):
         pl=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl"+str(i+1),player_descr="v0.1",flags=flags)
@@ -59,6 +57,7 @@ if __name__ == "__main__":
         ca_chat = CellularAutomata_chat(pl, manager_dict,debug=False)
 
         if(i==0):# Creatore del gioco
+            ca_chat = CellularAutomata_chat(pl, manager_dict,debug=True)
             t = multiprocessing.Process(target=start_game, args=(ca,True))
         else:  
             t = multiprocessing.Process(target=start_game, args=(ca,))
@@ -66,8 +65,6 @@ if __name__ == "__main__":
         threads.append(c)
         threads.append(t)
     #_______________________________________________________________________________
-
-
 
     for n in range(0, len(threads)):
         threads[n].start()
