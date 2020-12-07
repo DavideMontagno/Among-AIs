@@ -9,7 +9,6 @@ import os
 import imageio
 import multiprocessing
 
-count=0
 png_gif_dir = "./gif/"
 tot=1
 debug = False
@@ -25,10 +24,11 @@ def start_chat(cellular_chat):
 
 if __name__ == "__main__":
 
+
     #PARAMETRI
     NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     n_players=5
-    flags="TQ1B"
+    flags="Q1B"
     
     print(NAME_GAME)
 

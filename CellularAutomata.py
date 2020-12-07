@@ -332,8 +332,8 @@ class CellularAutomata():
 
         ######CREATION#######################################################
         if(starting==True):
-            print("CREATION, wait 20 seconds")
-            time.sleep(20)
+            print("CREATION, wait 30 seconds")
+            time.sleep(30)
             if(self.game_interface.manage_game("start").lower().find("error")!=-1):
                 print("ERRORE CREAZIONE")
                 exit()
