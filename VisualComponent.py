@@ -11,6 +11,19 @@ class VisualComponent():
         self.is_impostor = False
         self.set_information()
 
+    def change_behaviour(self, ai_list):
+        #TODO define a strategy to remove the humans
+        humans = []
+        for player in ai_list:
+            if(player == self.player.player_name):
+                continue
+            choise = random.randint(0,1)
+            if(choise == 0):
+                humans.append(player)
+                # ai_list.remove(player)
+            
+        return humans
+
     def set_information(self):
         # Get game symbol
         result = self.player.status("status")
@@ -53,7 +66,7 @@ class VisualComponent():
     
     def get_allies_name(self, status_result=[]):
         if(status_result==[]):
-            status_result = self.game_interface.status("status")
+            status_result = self.player.status("status")
 
         list_allies=[]
         splitted = status_result.split()
