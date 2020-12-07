@@ -300,7 +300,7 @@ class CellularAutomata():
             print("--- %.2f seconds --- "%(time.time() - start_match)+
                 "|||||||||||||||||||||||||||WIN "+self.game_interface.player_name+" "+self.mode+"|||||||||||||||||||||||||||||||||")
             
-            return True
+            return 1
 
         if(result == 2 or result == 3):
             error_information=""
@@ -312,7 +312,7 @@ class CellularAutomata():
             print(
                 "|||||||||||||||||||||||||||ERROR"+self.game_interface.player_name+" "+self.mode+" "+error_information+"|||||||||||||||||||||||||||||||")
 
-            return False
+            return 0
 
     def wait_lobby(self):
         while(True):
