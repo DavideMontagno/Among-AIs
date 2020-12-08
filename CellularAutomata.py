@@ -329,7 +329,6 @@ class CellularAutomata():
     def play(self, starting=False):
 
         print(self.game_interface.player_name+" is in!!!")
-
         ######CREATION#######################################################
         if(starting==True):
             print("CREATION, wait 30 seconds")
@@ -340,7 +339,6 @@ class CellularAutomata():
             else: print("Started")
 
         ##### LOBBY #######################################################################
-
         self.wait_lobby()
         
         ####MATCH############################################################################
@@ -373,6 +371,7 @@ class CellularAutomata():
                 
             if("cooldown_shot_end" in self.manager_dict):
                 self.attack()
+                pass
 
             if(len(self.path)>0):
                 self.move()

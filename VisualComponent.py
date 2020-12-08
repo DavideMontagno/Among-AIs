@@ -130,7 +130,7 @@ class VisualComponent():
 
 
         grid_cellular_map = Grid(
-            width=len(self.raw_map), height=len(self.raw_map[0])) # perché qui si controlla la prima posizionie nella HEIGHT(e mi trovo), ma non nella width???
+            width=len(self.raw_map[0]), height=len(self.raw_map))
 
         list_enemies_position=[]
         for row in range(len(self.raw_map)):
@@ -156,15 +156,15 @@ class VisualComponent():
                     result = 5
                     walkable = True
 
-                grid_cellular_map.nodes[column][row] = Node(
-                    x=row, y=column, walkable=walkable, weight=result)
-
+                grid_cellular_map.nodes[row][column] = Node(
+                    x=column, y=row, walkable=walkable, weight=result)
+        
         if(self.cellular_automata.mode == "007"):
             if(random.uniform(0, 1)>=self.cellular_automata.risk_007):
 
                 next_move={}
 
-                if(self.cellular_automata.player_position[0]+1<=len(self.raw_map)):
+                if(self.cellular_automata.player_position[0]+1<=len(self.raw_map[0])):
                     next_move["S"]=(self.cellular_automata.player_position[0]+1,self.cellular_automata.player_position[1])
                 if(self.cellular_automata.player_position[0]-1>=0):
                     next_move["N"]=(self.cellular_automata.player_position[0]-1,self.cellular_automata.player_position[1])
@@ -177,11 +177,11 @@ class VisualComponent():
                     old_node = grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]]
                     for enemy_position in list_enemies_position:
                         if(enemy_position[1]==next_move[key][1]):# Se la colonna è la stessa
-                            grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
-                            x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
+                            grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]] = Node(
+                            x=next_move[key][1], y=next_move[key][0], walkable=old_node.walkable, weight=11)
 
                         if(enemy_position[0]==next_move[key][0]):# Se la riga è la stessa
-                            grid_cellular_map.nodes[next_move[key][1]][next_move[key][0]] = Node(
-                            x=next_move[key][0], y=next_move[key][1], walkable=old_node.walkable, weight=11)
-
+                            grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]] = Node(
+                            x=next_move[key][1], y=next_move[key][0], walkable=old_node.walkable, weight=11)
+        
         return grid_cellular_map, self.raw_map
