@@ -9,7 +9,6 @@ import os
 import imageio
 import multiprocessing
 
-count=0
 png_gif_dir = "./gif/"
 tot=1
 debug = False
@@ -25,19 +24,18 @@ def start_chat(cellular_chat):
 
 if __name__ == "__main__":
 
+
     #PARAMETRI
     NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    n_players=5
-    flags="Q1B"
+    n_players=6
+    flags="W1B"
     
     print(NAME_GAME)
 
     #INIZIALIZZAZIONE THREAD COMMUNICATION
     manager = multiprocessing.Manager()
 
-
     #OTHER_PLAYER_GAME_INTERFACE___________________________________________________________________
-
     threads=[]
     for i in range(n_players):
         pl=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl"+str(i+1),player_descr="v0.1",flags=flags)
@@ -52,22 +50,22 @@ if __name__ == "__main__":
         manager_dict = manager.dict()
 
         if(i%2==1):
-            ca = CellularAutomata(pl, manager_dict,debug=False,mode="007") # to Debug
+            ca = CellularAutomata(pl, manager_dict,debug=True,mode="007") # to Debug
         else:
             ca = CellularAutomata(pl, manager_dict,debug=False,mode="kamikaze") # to Debug
         
-        ca_chat = CellularAutomata_chat(pl, manager_dict,debug=False)
 
         if(i==0):# Creatore del gioco
+            ca_chat = CellularAutomata_chat(pl, manager_dict,debug=True)
             t = multiprocessing.Process(target=start_game, args=(ca,True))
-        else:  
+        else:
+            ca_chat = CellularAutomata_chat(pl, manager_dict,debug=False)
             t = multiprocessing.Process(target=start_game, args=(ca,))
+
         c = multiprocessing.Process(target=start_chat, args=(ca_chat,))
         threads.append(c)
         threads.append(t)
     #_______________________________________________________________________________
-
-
 
     for n in range(0, len(threads)):
         threads[n].start()

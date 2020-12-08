@@ -50,10 +50,16 @@ class CellularAutomata_chat():
             if(self.debug): print(result)
             if("Game finished!" in result): 
                 break
-        
+        if(self.debug): 
+            file_object = open('sample.txt', 'a')
+            file_object.write(chat[-1])
+
         while(True):
             line = str(self.player.chat.read_until(b"\n").decode("utf-8"))
             chat.append(line)
-            if(self.debug): print(line)
+            if(self.debug): 
+                file_object.write(line+"\n")
+                print(line)
+
             if("-----------------" in line):
                 return 0

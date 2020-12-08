@@ -1,0 +1,13 @@
+ai9_20201207_231933 @GameServer Game finished! ai9_pl5 from team 0 won the game.
+ai9_20201207_231933 @GameServer (0:A) ai9_pl1              KILLED   28
+
+ai9_20201207_231933 @GameServer (0:B) ai9_pl3              ACTIVE   38
+
+ai9_20201207_231933 @GameServer (0:C) ai9_pl5              ACTIVE   98
+
+ai9_20201207_231933 @GameServer (1:a) ai9_pl2              KILLED   28
+
+ai9_20201207_231933 @GameServer (1:b) ai9_pl4              KILLED    8
+
+ai9_20201207_231933 @GameServer -----------------
+
