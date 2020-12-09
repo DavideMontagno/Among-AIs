@@ -32,12 +32,16 @@ class Strategies():
         end_opposite = grid_cellular_map.node(flag_opposite[1][0],flag_opposite[0][0])
 
         if(self.visual.getLoyality()==True): ##Impostore
-            if(self.debug): print("I'm an impostor so i'm rushing to opposite team flag")
-
-            grid_cellular_map.cleanup()
-            finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
-            path, _ = finder.find_path(start, end_opposite, grid_cellular_map) #Path per la bandiera da catturare
-            path=[(elem[1],elem[0])for elem in path]
+            if(cooldown):
+                grid_cellular_map.cleanup()
+                finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
+                path, _ = finder.find_path(start, end_opposite, grid_cellular_map) #Path per la bandiera da catturare
+                path=[(elem[1],elem[0])for elem in path]
+            else:
+                grid_cellular_map.cleanup()
+                finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
+                path, _ = finder.find_path(start, end_own, grid_cellular_map) #Path per la bandiera da catturare
+                path=[(elem[1],elem[0])for elem in path]
             return path, raw_map ## Go to capture the flag
         else: ## PlayerNormale
             if(cooldown):
@@ -56,13 +60,14 @@ class Strategies():
                     print("Distance from correct flag: "+str(len(path)))
                     print("Distance from opposite flag: "+str(len(path_opposite)))
                 if(len(path)>len(path_opposite)): ### Stay in own base
-                    if(self.debug): print("I'm going to my own base")
+                    if(self.debug): print(self.visual.getPlayerGameSymbol()+": I'm going to my own base")
                     return path_opposite, raw_map
                 else: # Go to capture the flag
-                    if(self.debug): print("I'm capturing the flag")
+                    if(self.debug): print(self.visual.getPlayerGameSymbol()+": I'm going to capture the flag")
+                   
                     return path, raw_map
             else:
-               if(self.debug): print("I'm capturing the flag")
+               if(self.debug): print(self.visual.getPlayerGameSymbol()+": I'm going to capture the flag")
 
                grid_cellular_map.cleanup()
                finder = AStarFinder(diagonal_movement=DiagonalMovement.never, time_limit=10000, max_runs=100000)
