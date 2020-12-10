@@ -37,19 +37,43 @@ class VisualComponent():
         if(result[index_l+8] != result[index_t+5]):
             self.is_impostor = True
 
+        raw_map,response = self.player.process_map()
+        position_temp=np.where(raw_map == self.game_symbol)
+        
+
         # Get position
         index = result.find("PL: symbol="+self.game_symbol +
                             " name="+self.player.player_name+" team=")
         x1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+4]
         x2 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+5]
-        if(x2 == " "):
+        x3 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+6]
+        if(not x2.isdigit()):
             y1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+8]
             y2 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+9]
-        else:
+            y3 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+10]
+        elif(not x3.isdigit()):
             y1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+9]
             y2 = result[index+23+len(self.game_symbol) +
                         len(self.player.player_name)+10]
+            y3 = result[index+23+len(self.game_symbol) +len(self.player.player_name)+11]
+        else:
+            y1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+10]
+            y2 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+11]
+            y3 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+12]
 
+        if(not y3.isdigit()):
+            y3=" "
+        if(not y2.isdigit()):
+            y2=" "
+        if(not y1.isdigit()):
+            y1=" "
+        if(not x3.isdigit()):
+            x3=" "
+        if(not x2.isdigit()):
+            x2=" "
+        if(not x1.isdigit()):
+            x1=" "
+        
         #Define Enemies
         if(self.is_impostor==False):
             if(self.game_symbol.islower()):
@@ -62,7 +86,8 @@ class VisualComponent():
             else:
                 self.player_enemies="upper"
 
-        self.player_position = (int(y1+y2), int(x1+x2))
+        #self.player_position = (int(y1+y2+y3), int(x1+x2+x3))
+        self.player_position =(position_temp[0][0],position_temp[1][0])
     
     def get_allies_name(self, status_result=[]):
         if(status_result==[]):

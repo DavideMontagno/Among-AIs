@@ -12,7 +12,13 @@ import multiprocessing
 png_gif_dir = "./gif/"
 tot=1
 debug = False
-
+join_tournament = False
+if(join_tournament):
+    tournament = "SmartCUP3"
+    pltournament1 = Tournament(name="Garada1", tournament=tournament)
+    pltournament2 = Tournament(name="Garada2", tournament=tournament)
+    pltournament3 = Tournament(name="Garada3", tournament=tournament)
+    input('Finished to join in tournament correctly! Press any key to continue..')
 
 def start_game(cellular_a,starting=False):
     res=cellular_a.play(starting)
@@ -26,8 +32,8 @@ if __name__ == "__main__":
 
 
     #PARAMETRI
-    NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    n_players=6
+    NAME_GAME = "Species"
+    n_players=1
     flags="W1B"
     
     print(NAME_GAME)
@@ -38,10 +44,8 @@ if __name__ == "__main__":
     #OTHER_PLAYER_GAME_INTERFACE___________________________________________________________________
     threads=[]
     for i in range(n_players):
-        pl=GameInterface(NAME_GAME,NAME_GAME,"ai9_pl"+str(i+1),player_descr="v0.1",flags=flags)
+        pl=GameInterface(NAME_GAME,NAME_GAME,"Garada"+str(i+1),player_descr="AI9-v1.1",flags=flags)
 
-        if(i==0):#Creatore del gioco
-            pl.manage_game("new")
 
         print(pl.interact("join"))
         pl.command_chat("name")
@@ -50,17 +54,11 @@ if __name__ == "__main__":
         manager_dict = manager.dict()
 
         if(i%2==1):
-            ca = CellularAutomata(pl, manager_dict,debug=True,mode="007") # to Debug
+            ca = CellularAutomata(pl, manager_dict,debug=False,mode="007") # to Debug
         else:
-            ca = CellularAutomata(pl, manager_dict,debug=False,mode="kamikaze") # to Debug
-        
-
-        if(i==0):# Creatore del gioco
-            ca_chat = CellularAutomata_chat(pl, manager_dict,debug=True)
-            t = multiprocessing.Process(target=start_game, args=(ca,True))
-        else:
-            ca_chat = CellularAutomata_chat(pl, manager_dict,debug=False)
-            t = multiprocessing.Process(target=start_game, args=(ca,))
+            ca = CellularAutomata(pl, manager_dict,debug=False,mode="007") # to Debug
+        ca_chat = CellularAutomata_chat(pl, manager_dict,debug=False)
+        t = multiprocessing.Process(target=start_game, args=(ca,))
 
         c = multiprocessing.Process(target=start_chat, args=(ca_chat,))
         threads.append(c)
