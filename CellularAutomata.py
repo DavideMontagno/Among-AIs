@@ -242,7 +242,6 @@ class CellularAutomata():
                 elif (self.is_enemy(elem)):
 
                     result = self.game_interface.interact("shoot", direction=key)
-                    self.already_shoot.append(elem)
                     self.last_shot = True
 
                     if(self.debug):
@@ -257,7 +256,7 @@ class CellularAutomata():
                         if(result.lower().find("error") != -1):
                             print('Cannot Shoot')
                         else:
-                            print("ARRAY SHOOTED")
+                            print("ARRAY SHOOTED prima dello sparo")
                             print(self.already_shoot)
                             print("Vettore controllato: ")
                             print(key+": " + str(dict_shoot_direction[key]))
