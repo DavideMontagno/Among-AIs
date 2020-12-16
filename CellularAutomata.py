@@ -21,7 +21,6 @@ class CellularAutomata():
             #preferisce cammini più sicuri per raggiungere la bandiera
             #cambia sempre il path a seconda degli avversari
             #Ha una percentuale di rischio impostabile
-            #TODO: gestire il caso di 007 come impostore
         ################
         self.debug = debug
         self.already_shoot = []
@@ -278,6 +277,9 @@ class CellularAutomata():
         return False
 
     def is_unshottable(self, elem):
+        if("already_shooted_name" in self.manager_dict):
+            self.already_shoot=[self.visual.dict_mapping_symbol_player[elem] for elem in self.manager_dict["already_shooted_name"]]
+        
         if(elem in ['#', '&', 'X', 'x'] or elem in self.already_shoot):
             return True
         return False
@@ -320,6 +322,8 @@ class CellularAutomata():
             result = self.game_interface.status("status")
             if("start_match" in self.manager_dict):
                 self.manager_dict["allies"] = self.visual.get_allies_name(result)
+                self.visual.get_mapping_symbol_players(result)
+
                 #####JUDGE###########
                 self.ai_list = self.visual.get_all_names(result)
                 for ai in self.ai_list:

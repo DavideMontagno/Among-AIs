@@ -10,6 +10,7 @@ class VisualComponent():
         self.raw_map = self.player.process_map()
         self.is_impostor = False
         self.set_information()
+        self.dict_mapping_symbol_player={}
 
     def change_behaviour(self, ai_list):
         #TODO define a strategy to remove the humans
@@ -27,6 +28,7 @@ class VisualComponent():
     def set_information(self):
         # Get game symbol
         result = self.player.status("status")
+        
         index = result.find("ME: symbol=")
         self.game_symbol = result[index+11]
 
@@ -37,42 +39,11 @@ class VisualComponent():
         if(result[index_l+8] != result[index_t+5]):
             self.is_impostor = True
 
+        # Get position
         raw_map,response = self.player.process_map()
         position_temp=np.where(raw_map == self.game_symbol)
         
-
-        # Get position
-        index = result.find("PL: symbol="+self.game_symbol +
-                            " name="+self.player.player_name+" team=")
-        x1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+4]
-        x2 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+5]
-        x3 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+6]
-        if(not x2.isdigit()):
-            y1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+8]
-            y2 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+9]
-            y3 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+10]
-        elif(not x3.isdigit()):
-            y1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+9]
-            y2 = result[index+23+len(self.game_symbol) +
-                        len(self.player.player_name)+10]
-            y3 = result[index+23+len(self.game_symbol) +len(self.player.player_name)+11]
-        else:
-            y1 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+10]
-            y2 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+11]
-            y3 = result[index+23+len(self.game_symbol)+len(self.player.player_name)+12]
-
-        if(not y3.isdigit()):
-            y3=" "
-        if(not y2.isdigit()):
-            y2=" "
-        if(not y1.isdigit()):
-            y1=" "
-        if(not x3.isdigit()):
-            x3=" "
-        if(not x2.isdigit()):
-            x2=" "
-        if(not x1.isdigit()):
-            x1=" "
+        #Map letters->player
         
         #Define Enemies
         if(self.is_impostor==False):
@@ -86,7 +57,6 @@ class VisualComponent():
             else:
                 self.player_enemies="upper"
 
-        #self.player_position = (int(y1+y2+y3), int(x1+x2+x3))
         self.player_position =(position_temp[0][0],position_temp[1][0])
     
     def get_allies_name(self, status_result=[]):
@@ -104,6 +74,21 @@ class VisualComponent():
                 list_allies.append(name)
  
         return list_allies
+
+    def get_mapping_symbol_players(self, status_result=[]):
+        if(status_result==[]):
+            status_result = self.player.status("status")
+
+        #dict_mapping_symbol_player
+        splitted = status_result.split()
+
+        for i in range(15,len(splitted),7):
+            symbol=splitted[i][7:]
+            name=splitted[i+1][5:]
+            self.dict_mapping_symbol_player[name]=symbol
+
+        return 
+
     def change_behaviour(self, ai_list):
          #TODO define a strategy to remove the humans
         humans = []
