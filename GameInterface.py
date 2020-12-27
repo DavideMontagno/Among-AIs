@@ -13,6 +13,7 @@ class GameInterface:
         self.chat_port = chat_port
         self.game_name = game_name
         self.chat_name = chat_name
+        self.chat_name_log=chat_name+"-L"
         self.player_nature = player_nature
         self.is_impostor = False
         self.player_name = player_name
@@ -21,14 +22,20 @@ class GameInterface:
         self.player_position = (0, 0)
         self.connection = telnetlib.Telnet(self.host, self.port)
         self.chat = telnetlib.Telnet(self.host, self.chat_port)
+        self.chat_log=None
 
         self.timestamp_last_command = time.clock()
 
         self.command_time_sleep=command_time_sleep
         self.default_time_sleep=default_time_sleep
+
         self.flags=flags
+
         if("T" in self.flags):
-            self.command_time_sleep=0.05
+            self.command_time_sleep=0.005
+
+        
+
 
     def wait_last_command(self, time_mode="default"):
         if(time_mode=="default"):
@@ -70,7 +77,7 @@ class GameInterface:
 
         actual = switcher.get(command, "Invalid Command")
 
-        self.wait_last_command(time_mode="default")
+        self.wait_last_command(time_mode="game")#CHANGED
     
         self.connection.write(bytes(actual, "utf-8"))
         result = str(self.connection.read_until(
@@ -117,11 +124,21 @@ class GameInterface:
     def command_chat(self, command, text_chat=""):
         switcher = {"name": "NAME "+self.player_name+"\n",
                     "join": "JOIN "+self.chat_name+"\n",
+                    "join_log": "JOIN "+self.chat_name_log+"\n",
                     "leave": "LEAVE "+self.chat_name+"\n",
                     "post": "POST "+self.chat_name+" "+text_chat+"\n"
                     }
         actual = switcher.get(command, "Invalid Command")
-        self.chat.write(bytes(actual, "utf-8"))
+
+        if(command=="join_log"):
+            if("l" in self.flags):
+                print(self.chat_name_log)
+                self.chat_log = telnetlib.Telnet(self.host, self.chat_port)
+                self.chat_log.write(bytes(switcher["name"], "utf-8"))
+                self.chat_log.write(bytes(actual, "utf-8"))
+        else:
+            self.chat.write(bytes(actual, "utf-8"))
+
         if(command == "leave"):
             print("left chat correctly!")
 

@@ -2,6 +2,7 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, Node
 import numpy as np
 import random
+import pickle
 
 class VisualComponent():
     def __init__(self, cellular_automata,player):
@@ -11,6 +12,7 @@ class VisualComponent():
         self.is_impostor = False
         self.set_information()
         self.dict_mapping_symbol_player={}
+        self.map_history=[]
 
     def change_behaviour(self, ai_list):
         #TODO define a strategy to remove the humans
@@ -57,8 +59,16 @@ class VisualComponent():
             else:
                 self.player_enemies="upper"
 
+
         self.player_position =(position_temp[0][0],position_temp[1][0])
-    
+
+    def save_maps(self):
+        
+        with open('ml_raw_data/'+self.player.game_name+'.pickle', 'wb') as handle:
+            pickle.dump((self.player_enemies,self.game_symbol,self.map_history), handle)
+
+
+
     def get_allies_name(self, status_result=[]):
         if(status_result==[]):
             status_result = self.player.status("status")
@@ -136,6 +146,9 @@ class VisualComponent():
 
     def getGridFromMap(self):
         self.raw_map,response = self.player.process_map()
+        
+        self.map_history.append(self.raw_map)
+
         grid_cellular_map = Grid()
 
 

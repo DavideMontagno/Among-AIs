@@ -6,9 +6,10 @@ import time
 
 
 class CellularAutomata_chat():
-    def __init__(self,  player, manager_dict,debug=False): 
+    def __init__(self,  player, manager_dict,log=False,debug=False): 
         self.player = player
         self.debug = debug
+        self.log=log
         self.impostors={}
         self.allies=[]
         self.already_shooted_name=[]
@@ -57,26 +58,48 @@ class CellularAutomata_chat():
     def read_chat(self):
         end=False
         chat = []
+        if(self.log==False):
+            current_chat=self.player.chat
+        else:
+            current_chat=self.player.chat_log
+        count_scores=0
+
         while(True):
-            result = str(self.player.chat.read_until(
+            result = str(current_chat.read_until(
             b"\n").decode("utf-8"))
             chat.append(result)
 
-            self.process_message(result)
-
             if(self.debug): print(result)
-            if("Game finished!" in result): 
+
+
+            if(self.log==False):
+                self.process_message(result)
+            else:# Exit condition log chat
+                if("SCORES" in result):
+                    count_scores+=1
+                elif(count_scores>=1):
+                    break
+
+            if("Game finished!" in result): #Exit condition chat
                 break
-        if(self.debug): 
-            file_object = open('sample.txt', 'a')
-            file_object.write(chat[-1])
 
-        while(True):
-            line = str(self.player.chat.read_until(b"\n").decode("utf-8"))
-            chat.append(line)
+        if(self.log):
+            print("______________________Salvataggio Log")
+            with open('log.txt', 'w') as f:
+                for item in chat:
+                    f.write("%s\n" % item)
+        else:
             if(self.debug): 
-                file_object.write(line+"\n")
-                print(line)
+                file_object = open('sample.txt', 'a')
+                file_object.write(chat[-1])
 
-            if("-----------------" in line):
-                return 0
+            while(True):
+                line = str(self.player.chat.read_until(b"\n").decode("utf-8"))
+                chat.append(line)
+                if(self.debug): 
+                    file_object.write(line+"\n")
+                    print(line)
+
+                if("-----------------" in line):
+                    return 0
+        return 0

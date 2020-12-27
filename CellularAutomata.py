@@ -11,7 +11,7 @@ from Strategies import Strategies
 import random
 
 class CellularAutomata():
-    def __init__(self, game_interface, manager_dict, debug=False, consecutive_moves_no_shot=1, risk_007=0.1, mode="kamikaze"):
+    def __init__(self, game_interface, manager_dict, debug=False, consecutive_moves_no_shot=1, risk_007=0.1, mode="kamikaze", save_maps=False):
         ################MODE
         #KAMIKAZE
             #Trova il path minimo e va dritto alla bandiera, 
@@ -25,6 +25,7 @@ class CellularAutomata():
         self.debug = debug
         self.already_shoot = []
         self.last_shot = False
+        self.save_maps=save_maps
         self.grid_cellular_map = Grid()
         self.consecutive_moves_no_shot = consecutive_moves_no_shot
         self.path = []
@@ -296,11 +297,13 @@ class CellularAutomata():
         return most_probable_impostor
 
     def manage_end(self, result, start_match):
+        
 
         if(result == 1):
             print("--- %.2f seconds --- "%(time.time() - start_match)+
                 "|||||||||||||||||||||||||||WIN "+self.game_interface.player_name+" "+self.mode+"|||||||||||||||||||||||||||||||||")
-            
+            if(self.save_maps):
+                self.visual.save_maps()
             return 1
 
         if(result == 2 or result == 3):
@@ -351,7 +354,7 @@ class CellularAutomata():
         #####TIME ESTIMATE ######################################
         self.cooldown=False
         self.path, self.raw_map = self.strategy.getStrategy(cooldown=self.cooldown,position=self.player_position)
-        estimate_time=len(self.path)*(self.game_interface.command_time_sleep+self.game_interface.default_time_sleep)
+        estimate_time=len(self.path)*(self.game_interface.command_time_sleep*2)#Change
         self.cooldown=True
 
         #####COOLDOWN##############################
