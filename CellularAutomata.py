@@ -31,7 +31,7 @@ class CellularAutomata():
         self.path = []
         self.mode = mode
         self.risk_007=risk_007
-
+        self.last_message=""
         self.manager_dict=manager_dict
 
         self.game_interface = game_interface
@@ -317,10 +317,20 @@ class CellularAutomata():
                 "|||||||||||||||||||||||||||ERROR"+self.game_interface.player_name+" "+self.mode+" "+error_information+"|||||||||||||||||||||||||||||||")
 
             return 0
-
+    def canIspeak(self):
+        if(random.random()<0.05):
+            if("to_send" in self.manager_dict):
+                    #print(self.game_interface.player_name+" sending...."+self.manager_dict["to_send"])
+                    if(self.last_message!=self.manager_dict["to_send"]):
+                        self.game_interface.command_chat(command="post",text_chat=self.manager_dict["to_send"])
+                        self.last_message=self.manager_dict["to_send"]
+                        if(self.debug): print(self.last_message)
+                        #print(self.game_interface.player_name+" :"+self.last_message)
+    
     def wait_lobby(self):
+        self.game_interface.command_chat(command="post",text_chat="Hello, ")
         while(True):
-
+            self.canIspeak()
             result = self.game_interface.status("status")
             if("start_match" in self.manager_dict):
                 self.manager_dict["allies"] = self.visual.get_allies_name(result)
@@ -387,7 +397,7 @@ class CellularAutomata():
         print("MATCH")
         self.cooldown=False
         while(True):
-            
+            self.canIspeak()
             self.path, self.raw_map = self.strategy.getStrategy(cooldown=self.cooldown,position=self.player_position)
         
             # GESTIONE ACCUSE

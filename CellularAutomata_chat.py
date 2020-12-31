@@ -3,6 +3,8 @@ import os
 
 import datetime
 import time
+from generate import *
+import torch
 
 
 class CellularAutomata_chat():
@@ -13,9 +15,9 @@ class CellularAutomata_chat():
         self.impostors={}
         self.allies=[]
         self.already_shooted_name=[]
-        
+        self.decoder = torch.load("dataset.pt")
         self.manager_dict=manager_dict
-
+        self.last_message=""
 
     def process_message(self,text):
 
@@ -54,7 +56,16 @@ class CellularAutomata_chat():
         # Initial cooldown end message
         if("You can now catch the flag!" in text):
             self.manager_dict["cooldown_catch_end"]=True
-
+        
+        ##Answer to other players!
+        if(("@" not in text) and (self.player.player_name not in text)): 
+            generated = generate(self.decoder,prime_str=' '.join(text.split(" ")[2:]),predict_len=40).replace("\n"," ").replace("\t"," ")
+            if(self.last_message == generated): ##Deviare dal discorso!
+                generated = generate(self.decoder,prime_str="How is going?",predict_len=40).replace("\n"," ").replace("\t"," ")
+                self.last_message= generated
+            else:
+                last_message= generated
+            self.manager_dict["to_send"] = generated
     def read_chat(self):
         end=False
         chat = []

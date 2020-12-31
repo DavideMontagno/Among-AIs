@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     #PARAMETRI
     NAME_GAME = "ai9_"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")#"Species"
-    n_players=6
+    n_players=3
     flags="W1B"
     png_gif_dir = "./gif/"
     game_creation=True
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         manager_dict = manager.dict()
         
         if(i==0):
-            ca = CellularAutomata(pl, manager_dict,debug=True,mode="007") # to Debug
+            ca = CellularAutomata(pl, manager_dict,debug=False,mode="007") # to Debug
         else:
             if(i%2==1):
                 ca = CellularAutomata(pl, manager_dict,debug=False,mode="007") # to Debug
