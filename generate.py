@@ -33,11 +33,16 @@ def generate(decoder, prime_str='A', predict_len=100, temperature=0.8, cuda=Fals
 
             # Add predicted character to string and use as next input
             predicted_char = all_characters[top_i]
-            predicted += predicted_char
-            to_return+=predicted_char
-            inp = Variable(char_tensor(predicted_char).unsqueeze(0))
-            if cuda:
-                inp = inp.cuda()
+            if(predicted_char!="-"):
+                predicted += predicted_char
+                to_return+=predicted_char
+                if(predicted_char=="." or predicted_char=="!" or predicted_char=="?" ):
+                    return to_return
+                inp = Variable(char_tensor(predicted_char).unsqueeze(0))
+                if cuda:
+                    inp = inp.cuda()
+            else:
+                p=p-1
 
         return to_return
     except:
