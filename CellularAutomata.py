@@ -316,17 +316,23 @@ class CellularAutomata():
             return 0
 
     def wait_lobby(self):
+        check_position = True
+        self.players_dict = {}
         while(True):
 
             result = self.game_interface.status("status")
+            if(check_position):
+                check_position = False
+
             if("start_match" in self.manager_dict):
                 self.manager_dict["allies"] = self.visual.get_allies_name(result)
                 self.visual.get_mapping_symbol_players(result)
 
                 #####JUDGE###########
-                self.ai_list = self.visual.get_all_names(result)
-                for ai in self.ai_list:
-                    self.game_interface.deduction_game("judge", ai,"AI")
+                # self.ai_list = self.visual.get_all_names(result)
+                self.players_dict = self.visual.check_players_pos(result) # Initialize the dictionary for judge AI or Human
+                for ai in self.players_dict.items():
+                    self.game_interface.deduction_game("judge", str(ai[0]),"AI") #At game start judge every one with AI
                 break
 
     def play(self, starting=False):
