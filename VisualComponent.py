@@ -1,4 +1,5 @@
 from pathfinding.core.diagonal_movement import DiagonalMovement
+import time
 from pathfinding.core.grid import Grid, Node
 import numpy as np
 import random
@@ -7,23 +8,21 @@ class VisualComponent():
     def __init__(self, cellular_automata,player):
         self.player = player
         self.cellular_automata=cellular_automata
-        self.raw_map = self.player.process_map()
+        self.raw_map,_ = self.player.process_map()
         self.is_impostor = False
         self.set_information()
         self.dict_mapping_symbol_player={}
+        self.flag_0, self.flag_1 = self.flag_position()
+        self.players_pos = {}
 
-    def change_behaviour(self, ai_list):
-        #TODO define a strategy to remove the humans
-        humans = []
-        for player in ai_list:
-            if(player == self.player.player_name):
-                continue
-            choise = random.randint(0,1)
-            if(choise == 0):
-                humans.append(player)
-                # ai_list.remove(player)
-            
-        return humans
+    # Judge Humans
+    def judge_humans(self):
+        for player in self.players_pos.items():
+            if(player[1].get('count') > 2):
+                print(player[0])
+                self.player.deduction_game("judge", str(player[0]),"H")
+                player[1].update({'count' : -100})
+                # self.players_pos.pop(player[0])
 
     def set_information(self):
         # Get game symbol
@@ -58,6 +57,7 @@ class VisualComponent():
                 self.player_enemies="upper"
 
         self.player_position =(position_temp[0][0],position_temp[1][0])
+
     
     def get_allies_name(self, status_result=[]):
         if(status_result==[]):
@@ -88,17 +88,6 @@ class VisualComponent():
             self.dict_mapping_symbol_player[name]=symbol
 
         return 
-
-    def change_behaviour(self, ai_list):
-         #TODO define a strategy to remove the humans
-        humans = []
-        for player in ai_list:
-            if(player == self.player.player_name):
-                continue
-            choise = random.randint(0,1)
-            if(choise == 0):
-                humans.append(player)
-                # ai_list.remove(player)
 
     def get_all_names(self, status_result=[]):
           if(status_result==[]):
@@ -143,6 +132,8 @@ class VisualComponent():
             width=len(self.raw_map[0]), height=len(self.raw_map))
 
         list_enemies_position=[]
+
+        start_time = time.time()
         for row in range(len(self.raw_map)):
             for column in range(len(self.raw_map[0])):
 
@@ -166,8 +157,15 @@ class VisualComponent():
                     result = 5
                     walkable = True
 
+                self.update_pos(current_cell, row, column)
+                # self.judge_humans()
+
                 grid_cellular_map.nodes[row][column] = Node(
                     x=column, y=row, walkable=walkable, weight=result)
+        # Find AI's
+        self.findAI()
+        # Judge Humans
+        self.judge_humans()
         
         if(self.cellular_automata.mode == "007"):
             if(random.uniform(0, 1)>=self.cellular_automata.risk_007):
@@ -194,4 +192,50 @@ class VisualComponent():
                             grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]] = Node(
                             x=next_move[key][1], y=next_move[key][0], walkable=old_node.walkable, weight=11)
         
+        print("--- %s seconds ---" % (time.time() - start_time))
         return grid_cellular_map, self.raw_map
+
+    # Update the pos and prev_pos of each player
+    def update_pos(self, current_cell, row, column):
+        for player in self.players_pos.items():
+            if (player[1].get('symbol') == current_cell):
+                prev_pos = player[1].get('pos')
+                player[1]['prev_pos'] = prev_pos
+                player[1]['pos'] = (column, row)
+
+    # see if a player switch his position like a human nad not like and AI
+    def findAI(self):
+        for player in self.players_pos.items():
+            if(player[1]['team'] == '0'):
+                if(player[1]['prev_pos'][0] > player[1]['pos'][0]):
+                    player[1]['count'] += 1
+            else:
+                if(player[1]['prev_pos'][0] < player[1]['pos'][0]):
+                    player[1]['count'] += 1
+
+    # Initialize the dictionary with all players
+    def check_players_pos(self, status_result=[]):
+        if(status_result==[]):
+            status_result = self.player.status("status")
+
+        splitted = status_result.split()
+
+        for i in range(15,len(splitted),7):
+            symbol = splitted[i][7:]
+            name = splitted[i+1][5:]
+            team = splitted[i+2][5:]
+            x = int(splitted[i+3][2:])
+            y = int(splitted[i+4][2:])
+            pos = (x,y)
+            prev_pos = pos
+            self.players_pos[name] = {'symbol' : symbol,'team' : team, 'pos' : pos, 'prev_pos' : prev_pos, 'count' : 0}
+
+        print(self.players_pos)
+
+        return self.players_pos
+
+    def flag_position(self):
+        flag_0 = np.where(self.raw_map == 'x')
+        flag_1 = np.where(self.raw_map == 'X')
+
+        return flag_0, flag_1
