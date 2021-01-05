@@ -11,7 +11,7 @@ from Strategies import Strategies
 import random
 
 class CellularAutomata():
-    def __init__(self, game_interface, manager_dict, debug=False, consecutive_moves_no_shot=1, risk_007=0.1, mode="kamikaze"):
+    def __init__(self, game_interface, manager_dict, debug=False, consecutive_moves_no_shot=1, risk_007=0.1, mode="kamikaze", save_maps=False):
         ################MODE
         #KAMIKAZE
             #Trova il path minimo e va dritto alla bandiera, 
@@ -25,12 +25,13 @@ class CellularAutomata():
         self.debug = debug
         self.already_shoot = []
         self.last_shot = False
+        self.save_maps=save_maps
         self.grid_cellular_map = Grid()
         self.consecutive_moves_no_shot = consecutive_moves_no_shot
         self.path = []
         self.mode = mode
         self.risk_007=risk_007
-
+        self.last_message=""
         self.manager_dict=manager_dict
 
         self.game_interface = game_interface
@@ -300,7 +301,8 @@ class CellularAutomata():
         if(result == 1):
             print("--- %.2f seconds --- "%(time.time() - start_match)+
                 "|||||||||||||||||||||||||||WIN "+self.game_interface.player_name+" "+self.mode+"|||||||||||||||||||||||||||||||||")
-            
+            if(self.save_maps):
+                self.visual.save_maps()
             return 1
 
         if(result == 2 or result == 3):
@@ -314,16 +316,21 @@ class CellularAutomata():
                 "|||||||||||||||||||||||||||ERROR"+self.game_interface.player_name+" "+self.mode+" "+error_information+"|||||||||||||||||||||||||||||||")
 
             return 0
-
+    def canIspeak(self):
+        if(random.random()<0.05):
+            if("to_send" in self.manager_dict):
+                    #print(self.game_interface.player_name+" sending...."+self.manager_dict["to_send"])
+                    if(self.last_message!=self.manager_dict["to_send"]):
+                        self.game_interface.command_chat(command="post",text_chat=self.manager_dict["to_send"])
+                        self.last_message=self.manager_dict["to_send"]
+                        if(self.debug): print(self.last_message)
+                        #print(self.game_interface.player_name+" :"+self.last_message)
+    
     def wait_lobby(self):
-        check_position = True
-        self.players_dict = {}
+        self.game_interface.command_chat(command="post",text_chat="Hello, ")
         while(True):
-
+            self.canIspeak()
             result = self.game_interface.status("status")
-            if(check_position):
-                check_position = False
-
             if("start_match" in self.manager_dict):
                 self.manager_dict["allies"] = self.visual.get_allies_name(result)
                 self.visual.get_mapping_symbol_players(result)
@@ -357,7 +364,7 @@ class CellularAutomata():
         #####TIME ESTIMATE ######################################
         self.cooldown=False
         self.path, self.raw_map = self.strategy.getStrategy(cooldown=self.cooldown,position=self.player_position)
-        estimate_time=len(self.path)*(self.game_interface.command_time_sleep+self.game_interface.default_time_sleep)
+        estimate_time=len(self.path)*(self.game_interface.command_time_sleep*2)#Change
         self.cooldown=True
 
         #####COOLDOWN##############################
@@ -390,7 +397,7 @@ class CellularAutomata():
         print("MATCH")
         self.cooldown=False
         while(True):
-            
+            self.canIspeak()
             self.path, self.raw_map = self.strategy.getStrategy(cooldown=self.cooldown,position=self.player_position)
         
             # GESTIONE ACCUSE

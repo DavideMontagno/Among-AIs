@@ -3,6 +3,7 @@ import time
 from pathfinding.core.grid import Grid, Node
 import numpy as np
 import random
+import pickle
 
 class VisualComponent():
     def __init__(self, cellular_automata,player):
@@ -14,6 +15,7 @@ class VisualComponent():
         self.dict_mapping_symbol_player={}
         self.flag_0, self.flag_1 = self.flag_position()
         self.players_pos = {}
+        self.map_history=[]
 
     # Judge Humans
     def judge_humans(self):
@@ -58,7 +60,12 @@ class VisualComponent():
 
         self.player_position =(position_temp[0][0],position_temp[1][0])
 
-    
+    def save_maps(self):
+        
+        with open('ml_raw_data/'+self.player.game_name+'.pickle', 'wb') as handle:
+            pickle.dump((self.player_enemies,self.game_symbol,self.map_history), handle)
+
+
     def get_allies_name(self, status_result=[]):
         if(status_result==[]):
             status_result = self.player.status("status")
@@ -125,6 +132,9 @@ class VisualComponent():
 
     def getGridFromMap(self):
         self.raw_map,response = self.player.process_map()
+        
+        self.map_history.append(self.raw_map)
+
         grid_cellular_map = Grid()
 
 
