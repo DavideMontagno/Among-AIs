@@ -26,3 +26,19 @@ Next move is to install all the python dependecies with the command:
 pip install -r requirements.txt
 ```
 The file requirements.txt is in the repository
+
+## Web app
+
+- First of all download the jar file here [Among Ai's](https://smartapp2021.slack.com/files/U01DM9XF2CE/F01JCU0UBTK/amongais-linux.jar)
+- Then type this command:
+```sh
+chmod +x AmongAIs-Linux.zip
+```
+- Open the application with java with the following command:
+```sh
+java -jar AmongAIs-Linux.zip
+```
+- Login and choose the ingame username
+- Then follow the script instruction to start a game
+- Like before enjoy and have fun.
+
