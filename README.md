@@ -1,6 +1,6 @@
-# User Manual
+# User Manual 📚
 
-## Web app
+### Web app
 
 - First of all go to the page [Among Ai's](http://amongais.altervista.org/)
 - Login
@@ -14,7 +14,7 @@ python new_game.py
 
 Then have fun with the game 🎮
 
-## Linux app
+### Linux app 
 
 - First of all download the jar file here [Among Ai's](https://smartapp2021.slack.com/files/U01DM9XF2CE/F01JCU0UBTK/amongais-linux.jar)
 - Then type this command:
@@ -29,7 +29,7 @@ java -jar AmongAIs-Linux.zip
 - Then follow the script instruction to start a game
 - Like before enjoy and have fun.
 
-## Windows app
+### Windows app 
 
 - First of all download the jar file here [Among Ai's](https://smartapp2021.slack.com/files/U01DM9XF2CE/F01J0F80FEF/amongais-windows.jar)
 - Double click on the file
@@ -37,7 +37,7 @@ java -jar AmongAIs-Linux.zip
 - Then follow the script instruction to start a game
 - Like before enjoy and have fun.
 
-## MacOS app
+### MacOS app
 
 - First of all download the jar file here [Among Ai's](https://smartapp2021.slack.com/files/U01DM9XF2CE/F01J0F80FEF/amongais-windows.jar)
 - Double click on the file
