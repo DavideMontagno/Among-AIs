@@ -21,47 +21,48 @@ class CellularAutomata_chat():
         self.total_text=""
     def process_message(self,text):
 
-        # Shot message
-        if("hit" in text):
-            start="Why are you shooting?"
-            generated = generate(self.decoder,prime_str=start,predict_len=50).replace("\n"," ").replace("\t"," ").replace("--"," ")
-            self.manager_dict["to_send"] = start+generated
-            message=text.split()
+        if("@GameServer" in text):
+            # Shot message
+            if("hit" in text):
+                start="Why are you shooting?"
+                generated = generate(self.decoder,prime_str=start,predict_len=50).replace("\n"," ").replace("\t"," ").replace("--"," ")
+                self.manager_dict["to_send"] = start+generated
+                message=text.split()
 
-            if(self.allies==[]):
-                if("allies" in self.manager_dict):
-                    self.allies=self.manager_dict["allies"]
-                    self.impostors={k:0 for k in self.allies}
-                   
-            if(self.allies!=[]):
+                if(self.allies==[]):
+                    if("allies" in self.manager_dict):
+                        self.allies=self.manager_dict["allies"]
+                        self.impostors={k:0 for k in self.allies}
+                    
+                if(self.allies!=[]):
+                    
+                    if(message[4] in self.allies and message[2] in self.allies):
+                        self.impostors[message[2]]+=1
+                        self.manager_dict["impostors"]=self.impostors
+                    
+                # manage already shooted player
+                self.already_shooted_name.append(message[4])
+                self.manager_dict["already_shooted_name"]=self.already_shooted_name
                 
-                if(message[4] in self.allies and message[2] in self.allies):
-                    self.impostors[message[2]]+=1
-                    self.manager_dict["impostors"]=self.impostors
-                   
-            # manage already shooted player
-            self.already_shooted_name.append(message[4])
-            self.manager_dict["already_shooted_name"]=self.already_shooted_name
+            # End game message
+            if("Game finished!" in text):
+                self.manager_dict["finish"]=True
+
+            # Start game message
+            if("Now starting!" in text):
+                self.manager_dict["start_match"]=True
+
+            # Initial immortal cooldown end message
+            if("Hunting season open!" in text):
+                self.manager_dict["cooldown_shot_end"]=True
             
-        # End game message
-        if("Game finished!" in text):
-            self.manager_dict["finish"]=True
-
-        # Start game message
-        if("Now starting!" in text):
-            self.manager_dict["start_match"]=True
-
-        # Initial immortal cooldown end message
-        if("Hunting season open!" in text):
-            self.manager_dict["cooldown_shot_end"]=True
-        
-        # Initial cooldown end message
-        if("You can now catch the flag!" in text):
-            self.manager_dict["cooldown_catch_end"]=True
-        
+            # Initial cooldown end message
+            if("You can now catch the flag!" in text):
+                self.manager_dict["cooldown_catch_end"]=True
+            
         ##Answer to other players!
                 
-        if(("@" not in text) and (self.player.player_name not in text)): 
+        if(("@GameServer" not in text) and (self.player.player_name not in text)): 
             real_text=' '.join(text.split(" ")[2:])
             self.total_text += real_text
             if(len(self.total_text)<=360):
