@@ -327,7 +327,7 @@ class CellularAutomata():
                         #print(self.game_interface.player_name+" :"+self.last_message)
     
     def wait_lobby(self):
-        self.game_interface.command_chat(command="post",text_chat="Hello, ")
+        self.game_interface.command_chat(command="post",text_chat="Hello to everyone!")
         while(True):
             self.canIspeak()
             result = self.game_interface.status("status")

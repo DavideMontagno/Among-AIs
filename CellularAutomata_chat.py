@@ -3,7 +3,7 @@ import os
 
 import datetime
 import time
-from generate import *
+from TextComponent import *
 import torch
 
 
