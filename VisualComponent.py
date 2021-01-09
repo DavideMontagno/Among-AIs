@@ -202,7 +202,7 @@ class VisualComponent():
                             grid_cellular_map.nodes[next_move[key][0]][next_move[key][1]] = Node(
                             x=next_move[key][1], y=next_move[key][0], walkable=old_node.walkable, weight=11)
         
-        print("--- %s seconds ---" % (time.time() - start_time))
+        #print("--- %s seconds ---" % (time.time() - start_time))
         return grid_cellular_map, self.raw_map
 
     # Update the pos and prev_pos of each player
