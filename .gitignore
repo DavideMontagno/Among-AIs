@@ -7,3 +7,6 @@ dataset/
 
 # Folder Gif
 gif/
+
+# Folder Training data
+map_prediction_datasets/
